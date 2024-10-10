@@ -1,0 +1,134 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  h2 {
+    color: #4a90e2;
+  }
+  
+  button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #357abd;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-left: 5px solid #4a90e2;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  li h2 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+  
+  li p {
+    font-size: 1.1em;
+    color: #555;
+  }
+  
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+  }
+  
+  textarea {
+    height: 100px;
+  }
+  
+  .error, .loading {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .create-post {
+    margin-top: 40px;
+  }
+  
+  .create-post h2 {
+    margin-bottom: 10px;
+  }
+  
+  .create-post input[type="text"], .create-post textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .create-post button {
+    background-color: #5cb85c;
+  }
+  
+  .create-post button:hover {
+    background-color: #4e9b4e;
+  }
+  
+  .editing-area {
+    background-color: #eaf6ff;
+    padding: 10px;
+    border-left: 5px solid #357abd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  
+  .editing-area input, .editing-area textarea {
+    margin-top: 5px;
+  }
+  
+  .editing-area button {
+    background-color: #5cb85c;
+    margin-top: 10px;
+  }
+  
+  .editing-area button:hover {
+    background-color: #4e9b4e;
+  }
+  
+  .delete-button {
+    background-color: #d9534f;
+    margin-left: 10px;
+  }
+  
+  .delete-button:hover {
+    background-color: #c9302c;
+  }
+  
