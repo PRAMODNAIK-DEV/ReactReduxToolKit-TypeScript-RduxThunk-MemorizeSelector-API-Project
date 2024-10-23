@@ -10,6 +10,8 @@ import { toggleSearch } from "./features/search/searchSlice";
 import { useSelector } from "react-redux";
 import {selectFilteredMovies} from './features/movies/movieSlice';
 import Posts from "./components/Posts/Posts";
+import Login from "./components/Login";
+import DashBoard from "./pages/dashboard/DashBoard";
 
 function App() {
   // -----------------------------1----------------------------------------------------
@@ -79,6 +81,9 @@ function App() {
         {" "}
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
         <Header />
+
+        <DashBoard/>
+        <Login/>
 
         <Posts/>
         <div className="mb-12 flex">

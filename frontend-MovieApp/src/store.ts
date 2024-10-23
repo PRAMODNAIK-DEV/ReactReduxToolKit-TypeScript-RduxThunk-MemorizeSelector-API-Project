@@ -3,13 +3,17 @@ import themeReducer from '../src/features/theme/themeSlice'     // This line wil
 import movieReducer from "./features/movies/movieSlice";
 import searchReducer from './features/search/searchSlice';
 import postsReducer from './features/posts/postsSlice';
+import authReducer from './features/auth/authSlice';
+import analyticsReducer from './features/analytics/analyticsSlice';
 
 export const store = configureStore({
     reducer: {
         search: searchReducer,
         darkTheme: themeReducer,            // Here the Updated State for ThemeSlice will be stored.
         movies: movieReducer,
-        posts: postsReducer
+        posts: postsReducer,
+        auth: authReducer,
+        analytics: analyticsReducer,
     },
 });
 

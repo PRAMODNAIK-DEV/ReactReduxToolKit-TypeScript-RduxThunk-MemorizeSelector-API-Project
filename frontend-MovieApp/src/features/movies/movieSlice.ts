@@ -4,7 +4,6 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { log } from "console";
 
 type movieProp = {
   userId: number;
@@ -138,4 +137,5 @@ export const selectFilteredMovies = createSelector(
   }
 );
 
+// Export the action if any
 export default movieSlice.reducer;

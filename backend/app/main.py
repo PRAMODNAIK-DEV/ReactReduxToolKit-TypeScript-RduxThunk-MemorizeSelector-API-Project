@@ -1,8 +1,13 @@
+import requests
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
+from pydantic import BaseModel
+from datetime import datetime, timedelta
 
 app = FastAPI()
 
@@ -61,3 +66,57 @@ async def delete_post(post_id: int):
             posts.remove(post)
             return {"message": "Post deleted"}
     raise HTTPException(status_code=404, detail="Post not found")
+
+
+# Secret key for encoding the JWT
+SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Dummy user database
+fake_users_db = {
+    "user@example.com": {
+        "username": "user@example.com",
+        "password": "password123"  # In practice, this should be hashed.
+    }
+}
+
+# Helper function to create JWT tokens
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+# Login route
+@app.post("/login")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = fake_users_db.get(form_data.username)
+    if not user or user["password"] != form_data.password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user["username"]}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/api/analytics")
+def get_analytics_data():
+    # Fetch data from the CoinGecko API
+    url = "https://api.coingecko.com/api/v3/coins/markets"
+    params = {
+        "vs_currency": "usd",
+        "order": "market_cap_desc",
+        "per_page": 10,  # Number of coins to fetch
+        "page": 1,
+        "sparkline": "false"
+    }
+    
+    response = requests.get(url, params=params)
+    return response.json()
