@@ -54,7 +54,7 @@ const DashBoard: React.FC = () => {
 
       {/* Cards Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {displayData.map((coin, index) => (
+        {Array.isArray(filteredData) && filteredData.map((coin, index) => (
           <div key={index} className="bg-white shadow-md rounded-lg p-4">
             <h2 className="text-lg font-bold text-gray-800">{coin.name}</h2>
             <p className="text-gray-600">Rank: #{coin.market_cap_rank}</p>
@@ -73,7 +73,7 @@ const DashBoard: React.FC = () => {
         <h2 className="text-xl font-bold text-gray-800 mb-4">
           Price Chart (Top 3 Cryptocurrencies)
         </h2>
-        <LineChart width={600} height={300} data={displayData.slice(0, 3)}>
+        <LineChart width={600} height={300} data={filteredData}>
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
