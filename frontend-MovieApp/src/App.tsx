@@ -8,7 +8,7 @@ import { stat } from "fs";
 import SearchBox from "./components/SearchBox/SearchBox";
 import { toggleSearch } from "./features/search/searchSlice";
 import { useSelector } from "react-redux";
-import {selectFilteredMovies} from './features/movies/movieSlice';
+import { selectFilteredMovies } from "./features/movies/movieSlice";
 import Posts from "./components/Posts/Posts";
 import Login from "./components/Login";
 import DashBoard from "./pages/dashboard/DashBoard";
@@ -39,27 +39,24 @@ function App() {
     dispatch(getMovies());
   }, [dispatch]);
 
-  
-
   const handleSubmit = () => {
     const newMovie = {
       title: "Pramod WOrld!",
       body: "This is My own Movie",
       userId: 123,
-      id: 51,  // Example userId, could be dynamic
+      id: 51, // Example userId, could be dynamic
     };
 
-    dispatch(addMovie(newMovie))
-  }
+    dispatch(addMovie(newMovie));
+  };
 
-  const handleButtonClick = () =>{
-    if(searchRef.current){
-
-      dispatch(toggleSearch(searchRef.current?.value))
+  const handleButtonClick = () => {
+    if (searchRef.current) {
+      dispatch(toggleSearch(searchRef.current?.value));
     }
-  }
+  };
 
-// ---------------------------------------START-----------------------------------------
+  // ---------------------------------------START-----------------------------------------
   // Better to use Memoized Selectors
   // const searchedMovies = Array.isArray(movies.data) && movies.data.filter((movie) => {
   //   if(!searchTerm.length) return movie;
@@ -72,7 +69,6 @@ function App() {
   // Using Memorized selectFilterdMovies.
   const searchedMovies = useSelector(selectFilteredMovies);
   // console.log("searchedMovies", searchedMovies);
-  
 
   // ---------------------------------------END-----------------------------------------
   return (
@@ -80,22 +76,23 @@ function App() {
       <div className="dark:bg-red-900 dark:text-white min-h-screen px-4 lg:px-12 pb-20">
         {" "}
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
-        <Header />
+        <div className="flex-1 ml-64 p-6">
+          <Header />
+          <DashBoard />
+          <Login />
 
-        <DashBoard/>
-        <Login/>
-
-        <Posts/>
-        <div className="mb-12 flex">
-          <SearchBox ref={searchRef}/>
-          <button onClick={handleButtonClick}>Search</button>
-          <button onClick={handleSubmit}>Add a Movie</button>
+          <Posts />
+          <div className="mb-12 flex">
+            <SearchBox ref={searchRef} />
+            <button onClick={handleButtonClick}>Search</button>
+            <button onClick={handleSubmit}>Add a Movie</button>
+          </div>
+          {searchedMovies &&
+            searchedMovies.map((movie: any) => {
+              const { id, title, body } = movie;
+              return <MovieCard id={id} title={title} body={body} key={id} />;
+            })}
         </div>
-        {searchedMovies &&
-          searchedMovies.map((movie: any) => {
-            const { id, title, body } = movie;
-            return <MovieCard id={id} title={title} body={body} key={id} />;
-          })}
       </div>
     </div>
   );
