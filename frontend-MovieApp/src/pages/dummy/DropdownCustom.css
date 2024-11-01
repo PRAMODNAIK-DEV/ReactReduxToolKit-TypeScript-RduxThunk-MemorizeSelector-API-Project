@@ -1,0 +1,8 @@
+.custom-dropdown .p-dropdown {
+    border: none;
+    padding: 0;
+}
+
+.custom-dropdown .p-dropdown-filter-container {
+    display: none; /* Hide the extra search box */
+}

@@ -8,6 +8,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from pydantic import BaseModel
 from datetime import datetime, timedelta
+from app.models import data, TableData
 
 app = FastAPI()
 
@@ -120,3 +121,8 @@ def get_analytics_data():
     
     response = requests.get(url, params=params)
     return response.json()
+
+
+@app.get("/table-data", response_model=List[TableData])
+async def get_table_data():
+    return data

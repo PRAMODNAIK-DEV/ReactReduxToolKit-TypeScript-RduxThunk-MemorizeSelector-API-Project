@@ -3,6 +3,19 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 
+Install:
+1. npm install react-plotly.js plotly.js
+2. npm install --save-dev @types/plotly.js
+
+
+3. npm install d3
+4. npm install --save-dev @types/d3
+
+5. npm install react-slider
+6. npm i --save-dev @types/react-slider
+
+
+
 # Use filtering logic inside the Redux slice if:
 Your filtering logic is simple and directly tied to the state.
 You want to keep everything centralized for easy debugging and traceability.

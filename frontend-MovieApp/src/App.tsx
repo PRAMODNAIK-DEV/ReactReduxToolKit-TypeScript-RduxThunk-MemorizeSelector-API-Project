@@ -12,7 +12,16 @@ import { selectFilteredMovies } from "./features/movies/movieSlice";
 import Posts from "./components/Posts/Posts";
 import Login from "./components/Login";
 import DashBoard from "./pages/dashboard/DashBoard";
-
+import ScalableDropdown from "./pages/dummy/SearchableDropdown";
+import GraphApp from "./pages/graphs/GraphApp";
+import StackedBarChart2 from "./pages/ReCharts/StackedBarChart2";
+import StackedBarChartJS from "./pages/Chart.js/StackedBarChartJS";
+import StackedBarPlotly from "./pages/Plotly.js/StackedBarPlotly";
+import StackedBarChartD3 from "./pages/D3JS/StackedBarChartD3";
+import LineChartRe from "./pages/ReCharts/LineChartRe";
+import LineChartJS from "./pages/Chart.js/LineChartJS";
+import LineChartPlotly from "./pages/Plotly.js/LineChartPlotly";
+// import StackedBarChartD3 from "./pages/D3.js/StackedBarChartD3";
 function App() {
   // -----------------------------1----------------------------------------------------
   // const wholeAppState = useAppSelector((state) => state); // Object destructuring --By doing this will get the complete store data with it's current state.
@@ -78,6 +87,24 @@ function App() {
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
         <div className="flex-1 ml-64 p-6">
           <Header />
+        
+            <StackedBarChart2 />
+            {/* <div style={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}> */}
+            <LineChartRe />
+            <LineChartPlotly />
+            <LineChartJS />
+            {/* </div> */}
+            <StackedBarChartJS />
+            <StackedBarChartD3 />
+            <StackedBarPlotly />
+
+            <ScalableDropdown />
+          
+
+          {/* <div>
+            <GraphApp />
+          </div> */}
+          <br />
           <DashBoard />
           <Login />
 

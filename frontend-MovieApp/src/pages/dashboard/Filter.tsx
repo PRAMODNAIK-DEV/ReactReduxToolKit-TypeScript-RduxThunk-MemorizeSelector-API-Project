@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setFilter } from "../../features/analytics/analyticsSlice";
-
+import ScalableDropdown from '../dummy/SearchableDropdown';
 const Filter: React.FC = () => {
   const dispatch = useDispatch();
   const [category, setCategory] = useState("all");
@@ -48,7 +48,7 @@ const Filter: React.FC = () => {
           {/* Add more categories */}
         </select>
       </div>
-
+      <ScalableDropdown />
       {/* Date Range Filter */}
       {/* <div className="mb-6">
         <label className="block text-lg font-medium mb-2">Start Date:</label>
