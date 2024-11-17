@@ -145,6 +145,9 @@ const CumulativeStackedBarChart: React.FC = () => {
     plugins: {
       legend: {
         position: "right",
+        labels:{
+          usePointStyle: true,
+        }
       },
       tooltip: {
         callbacks: {
