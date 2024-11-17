@@ -175,17 +175,27 @@ const CumulativeStackedBarChart: React.FC = () => {
         //   return datasetIndex === totalDatasets - 1;
         // },
         display: (context) => {
-          // Only display labels for the dataset that represents the topmost non-null value for the stack
+          // Always display labels for the topmost visible stack
           const dayIndex = context.dataIndex;
           const datasets = context.chart.data.datasets;
+          const meta = context.chart.getDatasetMeta(context.datasetIndex);
       
-          // Find the last dataset with a non-null value for this index
-          const isTopStack = datasets.every((dataset, idx) => {
-            const dataValue = dataset.data[dayIndex];
-            return idx <= context.datasetIndex || dataValue === null || dataValue === undefined;
-          });
-      
-          return isTopStack; // Display the label only for the topmost stack
+          // Check if the dataset is visible
+          if (!meta.hidden) {
+            // Find if this dataset is the topmost visible one for this dayIndex
+            const isTopVisible = datasets.every((dataset, idx) => {
+              const metaForDataset = context.chart.getDatasetMeta(idx);
+              const dataValue = dataset.data[dayIndex];
+              return (
+                idx <= context.datasetIndex ||
+                metaForDataset.hidden || // Ignore hidden datasets
+                dataValue === null ||
+                dataValue === undefined
+              );
+            });
+            return isTopVisible; // Display label only for the topmost visible stack
+          }
+          return false; // Hide labels for hidden datasets
         },
         anchor: "end",
         align: "end",
