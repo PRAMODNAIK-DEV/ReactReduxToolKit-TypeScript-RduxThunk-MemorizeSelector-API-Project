@@ -87,6 +87,9 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
   const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
+    plugins:{
+      // datalabels: false,
+    },
     scales: {
       x: {
         beginAtZero: true,
@@ -175,6 +178,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
         <Box
           width={isSmallScreen ? "100%" : "600px"}
           height={isSmallScreen ? "300px" : "400px"}
+          // sx={{zIndex: 1}}
         >
           <Line data={data} options={options} />
         </Box>

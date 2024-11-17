@@ -11,7 +11,6 @@ import {
   ChartOptions,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { log } from "console";
 
 // This is mandatory after Chart.js 3
 ChartJS.register(
@@ -20,7 +19,7 @@ ChartJS.register(
   BarElement,
   Tooltip,
   Legend,
-  ChartDataLabels
+  // ChartDataLabels
 );
 
 // Define the data type
@@ -142,6 +141,7 @@ const CumulativeStackedBarChart: React.FC = () => {
 
   const options: ChartOptions<"bar"> = {
     responsive: true,
+    // maintainAspectRatio: true,
     plugins: {
       legend: {
         position: "right",
@@ -293,7 +293,7 @@ const CumulativeStackedBarChart: React.FC = () => {
 
   return (
     <div style={{ width: "100%", height: "500px", display: "flex" }}>
-      <Bar data={chartData} options={options} />
+      <Bar data={chartData} options={options} plugins={[ChartDataLabels, LinearScale]}/>
     </div>
   );
 };
