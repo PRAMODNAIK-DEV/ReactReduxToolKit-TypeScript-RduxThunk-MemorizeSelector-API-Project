@@ -175,9 +175,17 @@ const CumulativeStackedBarChart: React.FC = () => {
         //   return datasetIndex === totalDatasets - 1;
         // },
         display: (context) => {
-          const value = context.dataset.data[context.dataIndex];
-          // Display only for valid data points (not null or undefined)
-          return value !== null && value !== undefined;
+          // Only display labels for the dataset that represents the topmost non-null value for the stack
+          const dayIndex = context.dataIndex;
+          const datasets = context.chart.data.datasets;
+      
+          // Find the last dataset with a non-null value for this index
+          const isTopStack = datasets.every((dataset, idx) => {
+            const dataValue = dataset.data[dayIndex];
+            return idx <= context.datasetIndex || dataValue === null || dataValue === undefined;
+          });
+      
+          return isTopStack; // Display the label only for the topmost stack
         },
         anchor: "end",
         align: "end",
