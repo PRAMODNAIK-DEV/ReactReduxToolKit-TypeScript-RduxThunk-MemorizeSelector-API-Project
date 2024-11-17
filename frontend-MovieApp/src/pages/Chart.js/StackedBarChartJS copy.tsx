@@ -12,14 +12,7 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 // Define the data type
 type DataItem = {
@@ -27,18 +20,18 @@ type DataItem = {
   [key: string]: number | string;
 };
 
-// Generate cumulative data function with sorted and filtered entries
+// Generate cumulative data function
 const generateCumulativeData = () => {
-  const rawData: DataItem[] = Array.from({ length: 80 }, (_, i) => {
+  const rawData: DataItem[] = Array.from({ length: 120 }, (_, i) => {
     const date = dayjs("2024-07-15").add(i, "day").format("YYYY-MM-DD");
     return {
       date,
-      argentina: i < 90 ? Math.floor(Math.random() * 5) : 0,
-      australia: i >= 50 && i < 100 ? Math.floor(Math.random() * 4) : 0,
-      belgium: i >= 40 ? Math.floor(Math.random() * 2) : 0,
-      bulgaria: i >= 50 ? Math.floor(Math.random() * 2) : 0,
-      china: i >= 20 ? Math.floor(Math.random() * 8) : 0,
-      denmark: i >= 5 ? Math.floor(Math.random() * 2) : 0,
+      argentina: Math.floor(Math.random() * 5),
+      australia: Math.floor(Math.random() * 4),
+      belgium: Math.floor(Math.random() * 2),
+      bulgaria: Math.floor(Math.random() * 2),
+      china: Math.floor(Math.random() * 3),
+      denmark: Math.floor(Math.random() * 2),
     };
   });
 
@@ -79,20 +72,16 @@ const COLORS = [
 
 const CumulativeStackedBarChart: React.FC = () => {
   const labels = data.map((item) => item.date);
-  const keys = Object.keys(data[0])
-    .filter((key) => key !== "date")
-    .sort(); // Sort keys alphabetically for ascending country order
+  const keys = Object.keys(data[0]).filter((key) => key !== "date");
 
   // Create datasets for each country
   const datasets = keys.map((key, index) => ({
     label: key.charAt(0).toUpperCase() + key.slice(1),
-    data: data.map((item) =>
-      (item[key] as number) > 0 ? (item[key] as number) : null
-    ), // Show only non-zero values
+    data: data.map((item) => (item[key] as number) > 0 ? (item[key] as number) : 0),
     backgroundColor: COLORS[index % COLORS.length],
     stack: "cumulative",
-    barPercentage: 0.99,
-    categoryPercentage: 1.0,
+    barPercentage: 0.99,           // Remove space within the bar
+    categoryPercentage: 1.0,      // Remove space between stacks
   }));
 
   const chartData = {
@@ -109,17 +98,9 @@ const CumulativeStackedBarChart: React.FC = () => {
       tooltip: {
         callbacks: {
           label: (context: any) => {
-            const datasetLabel = context.dataset.label || ""; // Country name
-            const dateLabel = dayjs(
-              context.chart.data.labels[context.dataIndex]
-            ).format("YYYY-MMMM-DD"); // Formated date
-            const value = context.raw; // Value for the specific data point: Activations
-
-            return [
-              `Date: ${dateLabel}`,
-              `Activations: ${value}`,
-              `Country: ${datasetLabel}`,
-            ];
+            const label = context.dataset.label || "";
+            const value = context.raw;
+            return `${label}: ${value}`;
           },
         },
       },
@@ -130,18 +111,14 @@ const CumulativeStackedBarChart: React.FC = () => {
         formatter: (value: number, context: any) => {
           const dayIndex = context.dataIndex;
           const cumulativeTotal = keys.reduce(
-            (sum, key) =>
-              sum +
-              ((data[dayIndex][key] as number) > 0
-                ? (data[dayIndex][key] as number)
-                : 0),
+            (sum, key) => sum + ((data[dayIndex][key] as number) > 0 ? (data[dayIndex][key] as number) : 0),
             0
           );
           return cumulativeTotal > 0 ? cumulativeTotal : "";
         },
         font: {
           weight: "bold",
-          size: 6,
+          size: 12,
         },
         color: "#000",
       },
@@ -154,21 +131,14 @@ const CumulativeStackedBarChart: React.FC = () => {
             const date = dayjs(labels[index]);
             const day = date.date();
             const month = date.format("MMM");
-      
-            // Initial label for the day
+
+            // Display day on the first line
             let label = `${day}`;
-      
-            // Check if this is the first label of the month or it's the 15th
-            if (index === 0 || day === 15 || dayjs(labels[index - 1]).format("MMM") !== month) {
+
+            // Display the month on a separate line if it's the first occurrence of the month
+            if (index === 0 || dayjs(labels[index - 1]).format("MMM") !== month) {
               label += `\n${month}`;
             }
-      
-            // Handle skipping of the 15th by checking if 16 or 17 is available
-            if (day !== 15 && (day === 16 || day === 17) && !labels.some((label: string, idx: number) => dayjs(label).date() === 15)) {
-              // If 15th is skipped, add a label for 16th or 17th
-              label = `${day}\n${month}`;
-            }
-      
             return label;
           },
         },
@@ -180,7 +150,7 @@ const CumulativeStackedBarChart: React.FC = () => {
   };
 
   return (
-    <div style={{ width: "100%", height: "500px", display: "flex" }}>
+    <div style={{ width: "100%", height: "500px", display: 'flex'}}>
       <Bar data={chartData} options={options} />
     </div>
   );

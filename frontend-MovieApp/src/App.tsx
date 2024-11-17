@@ -21,6 +21,8 @@ import StackedBarChartD3 from "./pages/D3JS/StackedBarChartD3";
 import LineChartRe from "./pages/ReCharts/LineChartRe";
 import LineChartJS from "./pages/Chart.js/LineChartJS";
 import LineChartPlotly from "./pages/Plotly.js/LineChartPlotly";
+import CumulativeStackedBarChart from "./pages/ReCharts/StackedBarChart2";
+import StackedBarChartJSIMP from "./pages/Chart.js/StackedBarChartJSIMP";
 // import StackedBarChartD3 from "./pages/D3.js/StackedBarChartD3";
 function App() {
   // -----------------------------1----------------------------------------------------
@@ -87,38 +89,48 @@ function App() {
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
         <div className="flex-1 ml-64 p-6">
           <Header />
-        
-            <StackedBarChart2 />
-            {/* <div style={{ width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}> */}
-            <LineChartRe />
-            <LineChartPlotly />
-            <LineChartJS />
-            {/* </div> */}
-            <StackedBarChartJS />
-            <StackedBarChartD3 />
-            <StackedBarPlotly />
 
-            <ScalableDropdown />
+          {/* <StackedBarChartJSIMP/>
+          <StackedBarChart2 /> */}
+          <StackedBarChartJS />
+          {/* <StackedBarPlotly />
+          <StackedBarChartD3 /> */}
+
+          {/* <LineChartRe /> */}
           
+          <div className="plotly">
+            <LineChartPlotly />
+          </div>
+
+          {/* <LineChartJS /> */}
+
+          {/* </div> */}
+          {/*
+           */}
+
+          {/* <ScalableDropdown /> */}
 
           {/* <div>
             <GraphApp />
           </div> */}
           <br />
-          <DashBoard />
-          <Login />
+          {/* <DashBoard /> */}
 
-          <Posts />
-          <div className="mb-12 flex">
-            <SearchBox ref={searchRef} />
-            <button onClick={handleButtonClick}>Search</button>
-            <button onClick={handleSubmit}>Add a Movie</button>
-          </div>
-          {searchedMovies &&
-            searchedMovies.map((movie: any) => {
-              const { id, title, body } = movie;
-              return <MovieCard id={id} title={title} body={body} key={id} />;
-            })}
+          {/* <div className="login">
+            <Login />
+
+            <Posts />
+            <div className="mb-12 flex">
+              <SearchBox ref={searchRef} />
+              <button onClick={handleButtonClick}>Search</button>
+              <button onClick={handleSubmit}>Add a Movie</button>
+            </div>
+            {searchedMovies &&
+              searchedMovies.map((movie: any) => {
+                const { id, title, body } = movie;
+                return <MovieCard id={id} title={title} body={body} key={id} />;
+              })}
+          </div> */}
         </div>
       </div>
     </div>

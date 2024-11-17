@@ -149,7 +149,7 @@ const InteractiveLineChart: React.FC = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: '20px' }}>
+      <div >
         <span>Y-Axis Min: </span>
         <input
           type="range"
@@ -158,7 +158,7 @@ const InteractiveLineChart: React.FC = () => {
           step="5"
           value={yMin}
           onChange={handleYMinChange}
-          style={{ margin: '0 10px', width: '200px' }}
+          // style={{ margin: '0 10px', width: '200px' }}
         />
         <span>{yMin}</span>
       </div>
@@ -172,7 +172,7 @@ const InteractiveLineChart: React.FC = () => {
           step="10"
           value={yMax}
           onChange={handleYMaxChange}
-          style={{ margin: '0 10px', width: '200px' }}
+          // style={{ margin: '0 10px', width: '200px' }}
         />
         <span>{yMax}</span>
       </div>
@@ -186,7 +186,7 @@ const InteractiveLineChart: React.FC = () => {
           step="30"
           value={xMin}
           onChange={handleXMinChange}
-          style={{ margin: '0 10px', width: '200px' }}
+          // style={{ margin: '0 10px', width: '200px' }}
         />
         <span>{xMin}</span>
       </div>

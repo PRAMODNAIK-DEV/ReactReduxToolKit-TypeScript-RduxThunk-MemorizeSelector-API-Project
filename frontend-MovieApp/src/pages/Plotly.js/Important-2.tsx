@@ -9,7 +9,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions,
 } from "chart.js";
 import Slider from "@mui/material/Slider";
 import Box from "@mui/material/Box";
@@ -30,7 +29,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  // Generate labels with a pattern that fits the requirement
+  // Generate labels for each day but format to display every 5th day and monthly label
   const labels = Array.from({ length: 500 }, (_, i) => {
     const month = (i % 12) + 1;
     const year = Math.floor(i / 12) + 2026;
@@ -40,17 +39,10 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
     }`;
   });
 
-  // Format labels to display on every odd day, and only the month label at the end of each month
+  // Filtered labels to display every 5th day and monthly format for better readability
   const displayLabels = labels.map((label, index) => {
     const day = parseInt(label.split("-")[2]);
-    const month = parseInt(label.split("-")[1]);
-    if (day % 2 !== 0) {
-      return `${day}`; // Show only day for odd days
-    } else if (day === 30) {
-      return `${label.split("-")[0]}-${label.split("-")[1]}`; // Show only year-month for the last day
-    } else {
-      return ""; // Hide other days
-    }
+    return day === 1 || day % 5 === 0 ? label : "";
   });
 
   const activations = Array.from(
@@ -59,7 +51,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
   ); // S-curve growth
   const solver = Array.from({ length: 500 }, (_, i) => i * 2); // Linear growth
 
-  const [xRange, setXRange] = useState<number[]>([0, 300]);
+  const [xRange, setXRange] = useState<number[]>([0, 499]);
   const [yRange, setYRange] = useState<number[]>([0, 1000]);
 
   const data = {
@@ -84,7 +76,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
     ],
   };
 
-  const options: ChartOptions<"line"> = {
+  const options = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
@@ -94,22 +86,6 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
           display: true,
           text: "Date",
         },
-        grid: {
-          display: false,
-          // drawBorder: true,
-        },
-        ticks: {
-          maxRotation: 0,
-          minRotation: 45,
-          font: { size: 8, family: "Arial", // Set the desired font family
-            style: "normal", // Set the font style (normal, italic, etc.)
-            weight: "bold", },
-          autoSkip: false,
-          callback: function (value: string | number, index: number) {
-            const dateLabel = displayLabels[Number(value)]; // Convert value to number if necessary
-            return index % 6 === 0 ? dateLabel : "";
-          },
-        },
       },
       y: {
         min: yRange[0],
@@ -118,15 +94,9 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
           display: true,
           text: "Count",
         },
-        grid: {
-          display: false,
-        },
       },
     },
   };
-  
-  
-  
 
   return (
     <Box
@@ -155,19 +125,8 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
             step={50}
             marks
             sx={{
-              height: isSmallScreen ? 200 : isMediumScreen ? 250 : 300, // Height of the slider component
-              '& .MuiSlider-thumb': {
-                width: 10, // Size of the thumb
-                height: 10,
-              },
-              '& .MuiSlider-track': {
-                width: 5 // Thickness of the track
-              },
-              '& .MuiSlider-rail': {
-                width: 5, // Thickness of the rail
-              },
+              height: isSmallScreen ? 150 : isMediumScreen ? 200 : 250,
             }}
-            
           />
         </Box>
 
@@ -195,17 +154,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
           step={1}
           marks
           sx={{
-            width: "100%", // Adjusts the width for responsiveness
-            '& .MuiSlider-thumb': {
-              width: 12,
-              height: 12,
-            },
-            '& .MuiSlider-track': {
-              height: 6,
-            },
-            '& .MuiSlider-rail': {        // This is a line behind
-              height: 6,
-            },
+            width: "90%",
           }}
         />
       </Box>

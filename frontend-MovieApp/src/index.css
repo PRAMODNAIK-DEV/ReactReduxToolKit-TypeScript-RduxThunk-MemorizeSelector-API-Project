@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.graph6{
+    position: relative;
+}
+
+.plotly{
+    display: block;
+}
+
+.login{
+    margin-top: 50px;
+}

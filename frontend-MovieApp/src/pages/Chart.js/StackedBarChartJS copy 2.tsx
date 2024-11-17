@@ -12,14 +12,7 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 // Define the data type
 type DataItem = {
@@ -33,11 +26,11 @@ const generateCumulativeData = () => {
     const date = dayjs("2024-07-15").add(i, "day").format("YYYY-MM-DD");
     return {
       date,
-      argentina: i < 90 ? Math.floor(Math.random() * 5) : 0,
-      australia: i >= 50 && i < 100 ? Math.floor(Math.random() * 4) : 0,
+      argentina: i < 50 ? Math.floor(Math.random() * 5) : 0,
+      australia: i >= 20 && i < 100 ? Math.floor(Math.random() * 4) : 0,
       belgium: i >= 40 ? Math.floor(Math.random() * 2) : 0,
       bulgaria: i >= 50 ? Math.floor(Math.random() * 2) : 0,
-      china: i >= 20 ? Math.floor(Math.random() * 8) : 0,
+      china: i >= 30 ? Math.floor(Math.random() * 8) : 0,
       denmark: i >= 5 ? Math.floor(Math.random() * 2) : 0,
     };
   });
@@ -86,9 +79,7 @@ const CumulativeStackedBarChart: React.FC = () => {
   // Create datasets for each country
   const datasets = keys.map((key, index) => ({
     label: key.charAt(0).toUpperCase() + key.slice(1),
-    data: data.map((item) =>
-      (item[key] as number) > 0 ? (item[key] as number) : null
-    ), // Show only non-zero values
+    data: data.map((item) => (item[key] as number) > 0 ? (item[key] as number) : null), // Show only non-zero values
     backgroundColor: COLORS[index % COLORS.length],
     stack: "cumulative",
     barPercentage: 0.99,
@@ -109,17 +100,9 @@ const CumulativeStackedBarChart: React.FC = () => {
       tooltip: {
         callbacks: {
           label: (context: any) => {
-            const datasetLabel = context.dataset.label || ""; // Country name
-            const dateLabel = dayjs(
-              context.chart.data.labels[context.dataIndex]
-            ).format("YYYY-MMMM-DD"); // Formated date
-            const value = context.raw; // Value for the specific data point: Activations
-
-            return [
-              `Date: ${dateLabel}`,
-              `Activations: ${value}`,
-              `Country: ${datasetLabel}`,
-            ];
+            const label = context.dataset.label || "";
+            const value = context.raw;
+            return `${label}: ${value}`;
           },
         },
       },
@@ -130,18 +113,14 @@ const CumulativeStackedBarChart: React.FC = () => {
         formatter: (value: number, context: any) => {
           const dayIndex = context.dataIndex;
           const cumulativeTotal = keys.reduce(
-            (sum, key) =>
-              sum +
-              ((data[dayIndex][key] as number) > 0
-                ? (data[dayIndex][key] as number)
-                : 0),
+            (sum, key) => sum + ((data[dayIndex][key] as number) > 0 ? (data[dayIndex][key] as number) : 0),
             0
           );
           return cumulativeTotal > 0 ? cumulativeTotal : "";
         },
         font: {
           weight: "bold",
-          size: 6,
+          size: 12,
         },
         color: "#000",
       },
@@ -154,21 +133,11 @@ const CumulativeStackedBarChart: React.FC = () => {
             const date = dayjs(labels[index]);
             const day = date.date();
             const month = date.format("MMM");
-      
-            // Initial label for the day
+
             let label = `${day}`;
-      
-            // Check if this is the first label of the month or it's the 15th
-            if (index === 0 || day === 15 || dayjs(labels[index - 1]).format("MMM") !== month) {
+            if (index === 0 || dayjs(labels[index - 1]).format("MMM") !== month) {
               label += `\n${month}`;
             }
-      
-            // Handle skipping of the 15th by checking if 16 or 17 is available
-            if (day !== 15 && (day === 16 || day === 17) && !labels.some((label: string, idx: number) => dayjs(label).date() === 15)) {
-              // If 15th is skipped, add a label for 16th or 17th
-              label = `${day}\n${month}`;
-            }
-      
             return label;
           },
         },
@@ -180,7 +149,7 @@ const CumulativeStackedBarChart: React.FC = () => {
   };
 
   return (
-    <div style={{ width: "100%", height: "500px", display: "flex" }}>
+    <div style={{ width: "100%", height: "500px", display: 'flex'}}>
       <Bar data={chartData} options={options} />
     </div>
   );

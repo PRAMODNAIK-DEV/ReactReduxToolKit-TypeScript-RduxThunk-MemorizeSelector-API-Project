@@ -27,12 +27,12 @@ const generateCumulativeData = () => {
     // So here each day will have 6 items in the stack if the value of the item is 0 then will not be considered in the stack.
     return {
       date,
-      argentina: Math.floor(Math.random() * 5),
-      australia: Math.floor(Math.random() * 4),
-      belgium: Math.floor(Math.random() * 2),
-      bulgaria: Math.floor(Math.random() * 2),
+      argentina: Math.floor(Math.random() * 15),
+      australia: Math.floor(Math.random() * 14),
+      belgium: Math.floor(Math.random() * 25),
+      bulgaria: Math.floor(Math.random() * 0),
       china: Math.floor(Math.random() * 3),
-      denmark: Math.floor(Math.random() * 2),
+      denmark: Math.floor(Math.random() * 1),
     };
   });
 
