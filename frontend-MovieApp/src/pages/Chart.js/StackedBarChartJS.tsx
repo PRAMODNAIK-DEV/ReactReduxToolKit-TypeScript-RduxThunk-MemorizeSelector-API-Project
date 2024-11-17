@@ -11,7 +11,9 @@ import {
   ChartOptions,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { log } from "console";
 
+// This is mandatory after Chart.js 3
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -27,10 +29,13 @@ type DataItem = {
   [key: string]: number | string;
 };
 
-// Generate cumulative data function with sorted and filtered entries
+// Generating rawdData and cumulative data function with sorted and filtered entries
+//Here index starts from 0, So for 0 all the countries will have value 0
 const generateCumulativeData = () => {
   const rawData: DataItem[] = Array.from({ length: 80 }, (_, i) => {
     const date = dayjs("2024-07-15").add(i, "day").format("YYYY-MM-DD");
+    // console.log("Pramod", date);
+    
     return {
       date,
       argentina: i < 90 ? Math.floor(Math.random() * 5) : 0,
@@ -39,16 +44,26 @@ const generateCumulativeData = () => {
       bulgaria: i >= 50 ? Math.floor(Math.random() * 2) : 0,
       china: i >= 20 ? Math.floor(Math.random() * 8) : 0,
       denmark: i >= 5 ? Math.floor(Math.random() * 2) : 0,
+      pak: i >= 5 ? Math.floor(Math.random() * 2) : 0,
+      pramod: i >= 50 ? Math.floor(Math.random() * 2) : 0,
+      bang: i >= 5 ? Math.floor(Math.random() * 2) : 0,
+      murdeshwar: i >= 60 ? Math.floor(Math.random() * 2) : 0,
     };
   });
 
+    console.log("Pramod", rawData);
+
+  // Calculating Cumulative Data from rawData. 
   const cumulativeData: DataItem[] = [];
+  console.log("item", cumulativeData[0]);
 
   rawData.forEach((item, index) => {
     if (index === 0) {
+      //Here I have to add one DataItem with all the values null.
       cumulativeData.push(item);
     } else {
       const previousItem = cumulativeData[index - 1];
+      
       const cumulativeItem: DataItem = { date: item.date };
 
       Object.keys(item).forEach((key) => {
@@ -62,12 +77,20 @@ const generateCumulativeData = () => {
     }
   });
 
+
   return cumulativeData;
 };
 
 const data = generateCumulativeData();
+console.log("data", data);
+
 
 // Colors for each country
+const generateColor = () => {
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+  return `#${randomColor.padStart(6, '0')}`;
+};
+
 const COLORS = [
   "#8884d8",
   "#82ca9d",
@@ -77,16 +100,30 @@ const COLORS = [
   "#ff8042",
 ];
 
-const CumulativeStackedBarChart: React.FC = () => {
-  const labels = data.map((item) => item.date);
-  const keys = Object.keys(data[0])
-    .filter((key) => key !== "date")
-    .sort(); // Sort keys alphabetically for ascending country order
+while (COLORS.length < 35) {
+  const newColor = generateColor();
+  if (!COLORS.includes(newColor)) {
+    COLORS.push(newColor);
+  }
+}
 
-  // Create datasets for each country
+console.log(COLORS);
+const CumulativeStackedBarChart: React.FC = () => {
+
+  const labels = data.map((item) => item.date);   //Extracts all dates for the x-axis.
+  const keys = Object.keys(data[0])               //keys: Extracts country names (excluding date) and sorts them alphabetically.
+    .filter((key) => key !== "date")
+    .sort(); 
+
+  // Create datasets for each country. This is responsible for creating stack of countries for current date.
+  // This will loop through list of all the countires i.e in keys constant and checks from starting day to end date wheterh it has a value for each date if not it will put null in that place (not 0) so the chart.js will not plot the bar for this country in stacked bar.
+  // The outcome will be array of Object with 2 main keys {label: string, data: string, backgroundColor, stack: string and so on} and the size is equal to the number countries in the data.
   const datasets = keys.map((key, index) => ({
-    label: key.charAt(0).toUpperCase() + key.slice(1),
-    data: data.map((item) =>
+    label: key.charAt(0).toUpperCase() + key.slice(1),        // This will convert the 1st char of Country name to Capitall.
+    
+    // This will loop upto 80 times and check the value of it and repeats the same for each country in alphabetical order.
+    // So data will return array integers and the size is equal to number of day's from start to end date.
+    data: data.map((item) =>    
       (item[key] as number) > 0 ? (item[key] as number) : null
     ), // Show only non-zero values
     backgroundColor: COLORS[index % COLORS.length],
@@ -94,6 +131,9 @@ const CumulativeStackedBarChart: React.FC = () => {
     barPercentage: 0.99,
     categoryPercentage: 1.0,
   }));
+
+  console.log("datasets", datasets);
+  
 
   const chartData = {
     labels,
@@ -104,7 +144,7 @@ const CumulativeStackedBarChart: React.FC = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
+        position: "right",
       },
       tooltip: {
         callbacks: {
@@ -123,22 +163,46 @@ const CumulativeStackedBarChart: React.FC = () => {
           },
         },
       },
+      // This will display cumulative total values as labels on the Stacked Bar
       datalabels: {
-        display: (context: any) => context.datasetIndex === datasets.length - 1,
+        display: (context: any) => context.datasetIndex === datasets.length - 1,      // This will decide whether to display the label or not as Labels are only displayed for the last dataset (e.g., the top bar in each stack)
         anchor: "end",
         align: "end",
+        // offset: 5,
+        clip: true,
+        // formatter: (value: number) => (value > 1000 ? `${(value / 1000).toFixed(1)}k` : value),
+        // formatter: (value: number, context: any) => {
+        //   const dayIndex = context.dataIndex;
+        //   const cumulativeTotal = keys.reduce(            //Iterates over all country keys (keys) and sums up their values for the current date (data[dayIndex][key]).
+        //     (sum, key) =>
+        //       sum +
+        //       ((data[dayIndex][key] as number) > 0
+        //         ? (data[dayIndex][key] as number)
+        //         : 0),
+        //     0
+        //   );
+        //   return cumulativeTotal > 0 ? cumulativeTotal : "";
+        // },
         formatter: (value: number, context: any) => {
-          const dayIndex = context.dataIndex;
-          const cumulativeTotal = keys.reduce(
-            (sum, key) =>
-              sum +
-              ((data[dayIndex][key] as number) > 0
-                ? (data[dayIndex][key] as number)
-                : 0),
-            0
-          );
-          return cumulativeTotal > 0 ? cumulativeTotal : "";
+          const datasetIndex = context.datasetIndex;
+          const totalDatasets = context.chart.data.datasets.length;
+          const isTopStack = datasetIndex === totalDatasets - 1;
+          
+          if (isTopStack) {
+            const dayIndex = context.dataIndex;
+            const cumulativeTotal = keys.reduce(
+              (sum, key) =>
+                sum +
+                ((data[dayIndex][key] as number) > 0
+                  ? (data[dayIndex][key] as number)
+                  : 0),
+              0
+            );
+            return cumulativeTotal > 0 ? cumulativeTotal : "";
+          }
+          return ""; // Don't display for non-top datasets
         },
+        
         font: {
           weight: "bold",
           size: 6,
