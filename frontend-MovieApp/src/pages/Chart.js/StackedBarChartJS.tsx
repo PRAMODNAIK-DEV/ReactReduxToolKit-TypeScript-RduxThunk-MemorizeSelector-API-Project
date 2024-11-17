@@ -44,7 +44,7 @@ const generateCumulativeData = () => {
       bulgaria: i >= 50 ? Math.floor(Math.random() * 2) : 0,
       china: i >= 20 ? Math.floor(Math.random() * 8) : 0,
       denmark: i >= 5 ? Math.floor(Math.random() * 2) : 0,
-      pak: i >= 5 ? Math.floor(Math.random() * 2) : 0,
+      dubai: i >= 5 ? Math.floor(Math.random() * 2) : 0,
       pramod: i >= 50 ? Math.floor(Math.random() * 2) : 0,
       bang: i >= 5 ? Math.floor(Math.random() * 2) : 0,
       murdeshwar: i >= 60 ? Math.floor(Math.random() * 2) : 0,
@@ -155,6 +155,8 @@ const CumulativeStackedBarChart: React.FC = () => {
             ).format("YYYY-MMMM-DD"); // Formated date
             const value = context.raw; // Value for the specific data point: Activations
 
+            // if (value === null || value === undefined) return ""; // Skip tooltips for null/undefined values
+
             return [
               `Date: ${dateLabel}`,
               `Activations: ${value}`,
@@ -165,7 +167,18 @@ const CumulativeStackedBarChart: React.FC = () => {
       },
       // This will display cumulative total values as labels on the Stacked Bar
       datalabels: {
-        display: (context: any) => context.datasetIndex === datasets.length - 1,      // This will decide whether to display the label or not as Labels are only displayed for the last dataset (e.g., the top bar in each stack)
+        // display: (context: any) => context.datasetIndex === datasets.length - 1,      // This will decide whether to display the label or not as Labels are only displayed for the last dataset (e.g., the top bar in each stack)
+        // display: (context) => {
+        //   const datasetIndex = context.datasetIndex;
+        //   const totalDatasets = context.chart.data.datasets.length;
+        //   // Display label only for the top dataset
+        //   return datasetIndex === totalDatasets - 1;
+        // },
+        display: (context) => {
+          const value = context.dataset.data[context.dataIndex];
+          // Display only for valid data points (not null or undefined)
+          return value !== null && value !== undefined;
+        },
         anchor: "end",
         align: "end",
         // offset: 5,
@@ -183,24 +196,38 @@ const CumulativeStackedBarChart: React.FC = () => {
         //   );
         //   return cumulativeTotal > 0 ? cumulativeTotal : "";
         // },
-        formatter: (value: number, context: any) => {
-          const datasetIndex = context.datasetIndex;
-          const totalDatasets = context.chart.data.datasets.length;
-          const isTopStack = datasetIndex === totalDatasets - 1;
+        // formatter: (value: number, context: any) => {
+        //   const datasetIndex = context.datasetIndex;
+        //   const totalDatasets = context.chart.data.datasets.length;
+        //   const isTopStack = datasetIndex === totalDatasets - 1;
           
-          if (isTopStack) {
-            const dayIndex = context.dataIndex;
-            const cumulativeTotal = keys.reduce(
-              (sum, key) =>
-                sum +
-                ((data[dayIndex][key] as number) > 0
-                  ? (data[dayIndex][key] as number)
-                  : 0),
-              0
-            );
-            return cumulativeTotal > 0 ? cumulativeTotal : "";
-          }
-          return ""; // Don't display for non-top datasets
+        //   if (isTopStack) {
+        //     const dayIndex = context.dataIndex;
+        //     const cumulativeTotal = keys.reduce(
+        //       (sum, key) =>
+        //         sum +
+        //         ((data[dayIndex][key] as number) > 0
+        //           ? (data[dayIndex][key] as number)
+        //           : 0),
+        //       0
+        //     );
+        //     return cumulativeTotal > 0 ? cumulativeTotal : "";
+        //   }
+        //   return ""; // Don't display for non-top datasets
+        // },
+        formatter: (value, context) => {
+          if (typeof value !== "number") return ""; // Skip rendering for non-numeric values
+      
+          // Calculate the cumulative total for the current data index
+          const dayIndex = context.dataIndex;
+          const datasets = context.chart.data.datasets;
+          const cumulativeTotal = datasets.reduce((sum, dataset) => {
+            const dataValue = dataset.data[dayIndex];
+            // Ensure dataValue is a number before adding to the sum
+            return sum + (typeof dataValue === "number" ? dataValue : 0);
+          }, 0);
+      
+          return cumulativeTotal > 0 ? cumulativeTotal : "";
         },
         
         font: {
