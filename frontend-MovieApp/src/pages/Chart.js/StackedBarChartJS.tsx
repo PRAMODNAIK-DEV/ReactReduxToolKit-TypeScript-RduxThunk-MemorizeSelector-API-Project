@@ -11,6 +11,7 @@ import {
   ChartOptions,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { log } from "console";
 
 // This is mandatory after Chart.js 3
 ChartJS.register(
@@ -129,7 +130,7 @@ const CumulativeStackedBarChart: React.FC = () => {
     stack: "cumulative",
     barPercentage: 0.99,
     categoryPercentage: 1.0,
-  }));
+  })).sort((a,b)  => (a.label < b.label ? 1: -1));
 
   console.log("datasets", datasets);
   
@@ -139,15 +140,42 @@ const CumulativeStackedBarChart: React.FC = () => {
     datasets,
   };
 
+  console.log("DataSets", datasets)
   const options: ChartOptions<"bar"> = {
     responsive: true,
     // maintainAspectRatio: true,
     plugins: {
+      // legend: {
+      //   position: "right",
+      //   labels:{
+      //     usePointStyle: true,
+      //   }
+      // },
       legend: {
         position: "right",
-        labels:{
+        labels: {
           usePointStyle: true,
-        }
+          generateLabels: (chart) => {
+            const datasets = chart.data.datasets;
+  
+            // Sort datasets based on labels in reverse order
+            const sortedDatasets = datasets
+              .map((dataset, index) => ({
+                label: dataset.label,
+                backgroundColor: dataset.backgroundColor,
+                hidden: !chart.isDatasetVisible(index),
+                datasetIndex: index,
+              }))
+              .sort((a, b) => (a.label! < b.label! ? -1 : 1)); // Reverse alphabetical order
+  
+            return sortedDatasets.map((item) => ({
+              text: item.label || "",
+              fillStyle: item.backgroundColor as string, 
+              hidden: item.hidden,
+              datasetIndex: item.datasetIndex,
+            }));
+          },
+        },
       },
       tooltip: {
         callbacks: {

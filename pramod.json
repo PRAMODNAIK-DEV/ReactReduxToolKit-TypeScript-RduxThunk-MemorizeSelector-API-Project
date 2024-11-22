@@ -1,0 +1,65 @@
+SidebarState {
+    isOpen: boolean;
+    enteredPlanName: string | null;
+    selectedAsset: string | null;
+    preferredCountriesList: string[] | [];
+    preferredCountriesListWithValue: CountryType[];
+    nonPreferredCountriesList: string[] | [];
+    nonPreferredCountriesDropdownList: DropdownType[];
+    selectedPlan: PlanTypes | null;
+    plansList: PlanTypes[] | [];
+    selectedMileStone: string | null;
+    selectedDropdownsOption: { [key: string]: string | null };
+    dropdownStates: {
+      asset: boolean,
+      study: boolean,
+      plan: boolean,
+    };
+    preferredCountriesValues: {
+      [countryName: string]: number;
+    };
+    date: string;
+    lsfv_date: string;
+    nonPreferredCountriesDropdowns: DropdownData[]
+  }
+
+"user_preferred_country_flags": {
+        "argentinaYN":"True",
+        "australiaYN": "True",
+        "belgiumYN": "True",
+        "brazilYN": "True"
+    },
+    "preferred_country_site_values": {
+        "ARGENTINA": 10,
+        "AUSTRALIA": 20,
+        "BRAZIL": 12
+    },
+
+    to create this format you have to refer preferredCountriesListWithValue which has both country name and it's value, note here that key's should be same but the values are from the slice. To generate preferred_country_site_values not that only those countries which has value >0 should be considered to be included to this. number of key-value pair will vary for these 2 objects.
+
+    "user_non_preferred_selected_countries": {
+        "NP1": "colombia",
+        "NP2": "estonia",
+        "NP3": "",
+        "NP4": "",
+        "NP5": ""
+    },
+    "user_np_country_flags": {
+        "NP1YN": "True",
+        "NP2YN": "True",
+        "NP3YN": "False",
+        "NP4YN": "False",
+        "NP5YN": "False"
+    },
+    "np_site_values": {
+        "NP1Value": 300,
+        "NP2Value": 400
+    },
+    "np_selected_countries": {
+        "NP1": "COLOMBIA",
+        "NP2": "ESTONIA"
+    },
+
+
+    To generate these value you have to refer preferredCountriesListWithValue, Here these 4 objects max size is 5 only and the size of the np_site_values and np_selected_countries varies based on the user selection.
+Everything is case sensitive here
