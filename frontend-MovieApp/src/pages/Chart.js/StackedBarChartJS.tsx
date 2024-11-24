@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { forwardRef, useCallback, useRef } from "react";
 import { Bar } from "react-chartjs-2";
 import dayjs from "dayjs";
 import {
@@ -109,7 +109,10 @@ while (COLORS.length < 35) {
 }
 
 console.log(COLORS);
-const CumulativeStackedBarChart: React.FC = () => {
+const CumulativeStackedBarChart = forwardRef<ChartJS<"bar"> | null>((_, ref) => {
+
+  const chartInstanceRef = useRef<ChartJS<"bar"> | null>(null);
+
 
   const labels = data.map((item) => item.date);   //Extracts all dates for the x-axis.
   const keys = Object.keys(data[0])               //keys: Extracts country names (excluding date) and sorts them alphabetically.
@@ -320,24 +323,39 @@ const CumulativeStackedBarChart: React.FC = () => {
     },
   };
   
-  const ref = useRef<ChartJS<"bar"> | null>(null);
+  // const ref = useRef<ChartJS<"bar"> | null>(null);
 
-  const downloadImage = useCallback(() =>{
+  // const downloadImage = useCallback(() =>{
 
-    if (ref.current) {
-      const link = document.createElement("a");
-      link.download = "chart.png";
-      link.href = ref.current.toBase64Image();
-      link.click();
-    }
-  }, []);
+  //   if (ref.current) {
+  //     const link = document.createElement("a");
+  //     link.download = "chart.png";
+  //     link.href = ref.current.toBase64Image();
+  //     link.click();
+  //   }
+  // }, []);
 
   return (
     <div style={{ width: "100%", height: "500px", display: "flex" }}>
-      <button onClick={downloadImage}><strong>Download</strong></button>
-      <Bar ref={ref} data={chartData} options={options} plugins={[ChartDataLabels, LinearScale]}/>
+      {/* <button onClick={downloadImage}><strong>Download</strong></button> */}
+      <Bar 
+        // ref={ref} 
+        ref={(instance) => {
+          // Assign Chart.js instance to the passed ref
+          if (instance && instance instanceof ChartJS) {
+            chartInstanceRef.current = instance;
+            if (typeof ref === "function") {
+              ref(instance);
+            } else if (ref) {
+              (ref as React.MutableRefObject<ChartJS<"bar"> | null>).current = instance;
+            }
+          }
+        }}
+        data={chartData} 
+        options={options} 
+        plugins={[ChartDataLabels, LinearScale]}/>
     </div>
   );
-};
+});
 
 export default CumulativeStackedBarChart;

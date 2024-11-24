@@ -26,6 +26,7 @@ import StackedBarChartJSIMP from "./pages/Chart.js/StackedBarChartJSIMP";
 import { generateExcelFile } from "./pages/Excel/downloadExcel";
 import { downloadAPIDataInExcelWithCustomHeaders } from "./pages/Excel/downloadExcelFun";
 // import StackedBarChartD3 from "./pages/D3.js/StackedBarChartD3";
+import { Chart as ChartJS } from "chart.js";
 function App() {
   // -----------------------------1----------------------------------------------------
   // const wholeAppState = useAppSelector((state) => state); // Object destructuring --By doing this will get the complete store data with it's current state.
@@ -146,6 +147,20 @@ const secondTableData = [
   const searchedMovies = useSelector(selectFilteredMovies);
   // console.log("searchedMovies", searchedMovies);
 
+  const chartRef = useRef<ChartJS<"bar"> | null>(null);
+
+  const handleDownload = () => {
+    if (chartRef.current) {
+      const imageBase64 = chartRef.current.toBase64Image();
+      const link = document.createElement("a");
+      link.download = "chart.png";
+      link.href = imageBase64;
+      link.click();
+    } else {
+      console.error("Chart reference is null. Cannot download image.");
+    }
+  };
+
   // ---------------------------------------END-----------------------------------------
   return (
     <div className={darkTheme ? "dark" : ""}>
@@ -154,10 +169,12 @@ const secondTableData = [
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
         <div className="flex-1 ml-64 p-6">
           <Header />
+      <button onClick={handleDownload}><strong>Download</strong></button>
+
 
           {/* <StackedBarChartJSIMP/>
           <StackedBarChart2 /> */}
-          <StackedBarChartJS />
+          <StackedBarChartJS ref={chartRef}/>
           {/* <StackedBarPlotly />
           <StackedBarChartD3 /> */}
 
