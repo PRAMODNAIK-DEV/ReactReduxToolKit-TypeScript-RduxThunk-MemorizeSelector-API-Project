@@ -23,6 +23,8 @@ import LineChartJS from "./pages/Chart.js/LineChartJS";
 import LineChartPlotly from "./pages/Plotly.js/LineChartPlotly";
 import CumulativeStackedBarChart from "./pages/ReCharts/StackedBarChart2";
 import StackedBarChartJSIMP from "./pages/Chart.js/StackedBarChartJSIMP";
+import { generateExcelFile } from "./pages/Excel/downloadExcel";
+import { downloadAPIDataInExcelWithCustomHeaders } from "./pages/Excel/downloadExcelFun";
 // import StackedBarChartD3 from "./pages/D3.js/StackedBarChartD3";
 function App() {
   // -----------------------------1----------------------------------------------------
@@ -45,6 +47,68 @@ function App() {
   const dispatch = useAppDispatch();
 
   const searchRef = useRef<HTMLInputElement>(null);
+  const firstTableData = [
+    {
+        study_id: "Study001",
+        Total_Sites: 25,
+        p25: 5,
+        p25_date: "2024-11-01",
+        p50: 12,
+        p50_date: "2024-11-10",
+        p90: 20,
+        p90_date: "2024-11-20",
+        p100: 25,
+        p100_date: "2024-11-30",
+        FSA_Date: "2024-11-15",
+    },
+    {
+        study_id: "Study002",
+        Total_Sites: 15,
+        p25: 3,
+        p25_date: "2024-11-05",
+        p50: 8,
+        p50_date: "2024-11-12",
+        p90: 13,
+        p90_date: "2024-11-25",
+        p100: 15,
+        p100_date: "2024-11-30",
+        FSA_Date: "2024-11-18",
+    },
+];
+
+// Sample data for the second table
+const secondTableData = [
+    {
+        country: "USA",
+        total_sites: 50,
+        median_first_site: 8,
+        country_fsa: "2024-11-02",
+        p25: 10,
+        country_p25_date: "2024-11-04",
+        p50: 20,
+        country_p50_date: "2024-11-10",
+        p90: 40,
+        country_p90_date: "2024-11-18",
+        p100: 50,
+        country_p100_date: "2024-11-25",
+    },
+    {
+        country: "India",
+        total_sites: 30,
+        median_first_site: 6,
+        country_fsa: "2024-11-05",
+        p25: 7,
+        country_p25_date: "2024-11-07",
+        p50: 15,
+        country_p50_date: "2024-11-12",
+        p90: 25,
+        country_p90_date: "2024-11-22",
+        p100: 30,
+        country_p100_date: "2024-11-30",
+    },
+];
+  // generateExcelFile();
+  // downloadAPIDataInExcelWithCustomHeaders(firstTableData, secondTableData);
 
   useEffect(() => {
     dispatch(getMovies());
@@ -67,6 +131,7 @@ function App() {
     }
   };
 
+  
   // ---------------------------------------START-----------------------------------------
   // Better to use Memoized Selectors
   // const searchedMovies = Array.isArray(movies.data) && movies.data.filter((movie) => {
