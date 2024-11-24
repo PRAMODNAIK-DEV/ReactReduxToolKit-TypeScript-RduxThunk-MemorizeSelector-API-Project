@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { Bar } from "react-chartjs-2";
 import dayjs from "dayjs";
 import {
@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { log } from "console";
+import { reforwardRef } from "react-chartjs-2/dist/utils";
 
 // This is mandatory after Chart.js 3
 ChartJS.register(
@@ -318,10 +319,23 @@ const CumulativeStackedBarChart: React.FC = () => {
       },
     },
   };
+  
+  const ref = useRef<ChartJS<"bar"> | null>(null);
+
+  const downloadImage = useCallback(() =>{
+
+    if (ref.current) {
+      const link = document.createElement("a");
+      link.download = "chart.png";
+      link.href = ref.current.toBase64Image();
+      link.click();
+    }
+  }, []);
 
   return (
     <div style={{ width: "100%", height: "500px", display: "flex" }}>
-      <Bar data={chartData} options={options} plugins={[ChartDataLabels, LinearScale]}/>
+      <button onClick={downloadImage}><strong>Download</strong></button>
+      <Bar ref={ref} data={chartData} options={options} plugins={[ChartDataLabels, LinearScale]}/>
     </div>
   );
 };
