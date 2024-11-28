@@ -68,7 +68,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
         data: activations.slice(xRange[0], xRange[1] + 1),
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderWidth: 5, // Increase line width
+        borderWidth: 3, // Increase line width
         pointRadius: 1, // No points initially
         pointHoverRadius: 6, // Points appear on hover
         fill: true,
