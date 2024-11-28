@@ -30,6 +30,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+  // Generate labels with a pattern that fits the requirement
   const labels = Array.from({ length: 500 }, (_, i) => {
     const month = (i % 12) + 1;
     const year = Math.floor(i / 12) + 2026;
@@ -39,23 +40,24 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
     }`;
   });
 
+  // Format labels to display on every odd day, and only the month label at the end of each month
   const displayLabels = labels.map((label, index) => {
     const day = parseInt(label.split("-")[2]);
     const month = parseInt(label.split("-")[1]);
     if (day % 2 !== 0) {
-      return `${day}`;
+      return `${day}`; // Show only day for odd days
     } else if (day === 30) {
-      return `${label.split("-")[0]}-${label.split("-")[1]}`;
+      return `${label.split("-")[0]}-${label.split("-")[1]}`; // Show only year-month for the last day
     } else {
-      return "";
+      return ""; // Hide other days
     }
   });
 
   const activations = Array.from(
     { length: 500 },
     (_, i) => 300 * (1 - Math.exp(-i / 50))
-  );
-  const solver = Array.from({ length: 500 }, (_, i) => i * 2);
+  ); // S-curve growth
+  const solver = Array.from({ length: 500 }, (_, i) => i * 2); // Linear growth
 
   const [xRange, setXRange] = useState<number[]>([0, 300]);
   const [yRange, setYRange] = useState<number[]>([0, 1000]);
@@ -68,102 +70,25 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
         data: activations.slice(xRange[0], xRange[1] + 1),
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderWidth: 5, // Increase line width
-        pointRadius: 1, // No points initially
-        pointHoverRadius: 6, // Points appear on hover
         fill: true,
+        pointRadius: 0,
       },
       {
         label: "LSR Solver",
         data: solver.slice(xRange[0], xRange[1] + 1),
         borderColor: "rgba(54, 162, 235, 1)",
         backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderWidth: 3, // Increase line width
-        pointRadius: 1, // No points initially
-        pointHoverRadius: 6, // Points appear on hover
         fill: true,
+        pointRadius: 0,
       },
     ],
   };
 
-  // const options: ChartOptions<"line"> = {
-  //   responsive: true,
-  //   maintainAspectRatio: false,
-  //   plugins: {
-  //     tooltip: {
-  //       enabled: true, // Ensure tooltips are enabled
-  //       mode: "nearest",
-  //       intersect: false,
-  //     },
-  //   },
-  //   scales: {
-  //     x: {
-  //       beginAtZero: true,
-  //       title: {
-  //         display: true,
-  //         text: "Date",
-  //       },
-  //       grid: {
-  //         display: false,
-  //       },
-  //       ticks: {
-  //         maxRotation: 0,
-  //         minRotation: 45,
-  //         font: {
-  //           size: 8,
-  //           family: "Arial",
-  //           style: "normal",
-  //           weight: "bold",
-  //         },
-  //         autoSkip: false,
-  //         callback: function (value: string | number, index: number) {
-  //           const dateLabel = displayLabels[Number(value)];
-  //           return index % 6 === 0 ? dateLabel : "";
-  //         },
-  //       },
-  //     },
-  //     y: {
-  //       min: yRange[0],
-  //       max: yRange[1],
-  //       title: {
-  //         display: true,
-  //         text: "Count",
-  //       },
-  //       grid: {
-  //         display: true,
-  //       },
-  //     },
-  //   },
-  // };
-
   const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      tooltip: {
-        enabled: true, // Ensure tooltips are enabled
-        mode: "nearest",
-        intersect: false,
-        callbacks: {
-          // Customizes tooltip label
-          title: function (tooltipItems) {
-            // Extract the corresponding label for the hovered data point
-            const index = tooltipItems[0].dataIndex;
-            const rawLabel = labels[index]; // Use the original `labels` array
-            
-            const [year, month, day] = rawLabel.split("-").map(Number);
-            const monthNames = [
-              "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-            ];
-            return `${day}-${monthNames[month - 1]}-${year}`;
-          },
-          label: function (tooltipItem) {
-            // Show dataset label with value
-            return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
-          },
-        },
-      },
+    plugins:{
+      // datalabels: false,
     },
     scales: {
       x: {
@@ -174,19 +99,17 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
         },
         grid: {
           display: false,
+          // drawBorder: true,
         },
         ticks: {
           maxRotation: 0,
           minRotation: 45,
-          font: {
-            size: 8,
-            family: "Arial",
-            style: "normal",
-            weight: "bold",
-          },
+          font: { size: 8, family: "Arial", // Set the desired font family
+            style: "normal", // Set the font style (normal, italic, etc.)
+            weight: "bold", },
           autoSkip: false,
           callback: function (value: string | number, index: number) {
-            const dateLabel = displayLabels[Number(value)];
+            const dateLabel = displayLabels[Number(value)]; // Convert value to number if necessary
             return index % 6 === 0 ? dateLabel : "";
           },
         },
@@ -205,6 +128,9 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
     },
   };
   
+  
+  
+
   return (
     <Box
       display="flex"
@@ -212,7 +138,9 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
       alignItems="center"
       sx={{ padding: isSmallScreen ? 2 : 4 }}
     >
+      {/* Top row with y-axis slider and graph */}
       <Box display="flex" flexDirection="row" alignItems="center" width="100%">
+        {/* Y-axis slider on the left */}
         <Box
           display="flex"
           flexDirection="column"
@@ -230,29 +158,33 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
             step={50}
             marks
             sx={{
-              height: isSmallScreen ? 200 : isMediumScreen ? 250 : 300,
-              "& .MuiSlider-thumb": {
-                width: 10,
+              height: isSmallScreen ? 200 : isMediumScreen ? 250 : 300, // Height of the slider component
+              '& .MuiSlider-thumb': {
+                width: 10, // Size of the thumb
                 height: 10,
               },
-              "& .MuiSlider-track": {
-                width: 5,
+              '& .MuiSlider-track': {
+                width: 5 // Thickness of the track
               },
-              "& .MuiSlider-rail": {
-                width: 5,
+              '& .MuiSlider-rail': {
+                width: 5, // Thickness of the rail
               },
             }}
+            
           />
         </Box>
 
+        {/* Line chart in the center */}
         <Box
           width={isSmallScreen ? "100%" : "600px"}
           height={isSmallScreen ? "300px" : "400px"}
+          // sx={{zIndex: 1}}
         >
           <Line data={data} options={options} />
         </Box>
       </Box>
 
+      {/* X-axis slider below the graph */}
       <Box
         width={isSmallScreen ? "100%" : "600px"}
         mt={1}
@@ -267,15 +199,15 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
           step={1}
           marks
           sx={{
-            width: "100%",
-            "& .MuiSlider-thumb": {
+            width: "100%", // Adjusts the width for responsiveness
+            '& .MuiSlider-thumb': {
               width: 12,
               height: 12,
             },
-            "& .MuiSlider-track": {
+            '& .MuiSlider-track': {
               height: 6,
             },
-            "& .MuiSlider-rail": {
+            '& .MuiSlider-rail': {        // This is a line behind
               height: 6,
             },
           }}

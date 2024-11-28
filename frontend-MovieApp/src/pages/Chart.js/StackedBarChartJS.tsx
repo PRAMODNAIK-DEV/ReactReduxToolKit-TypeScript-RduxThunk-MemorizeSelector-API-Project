@@ -108,7 +108,7 @@ while (COLORS.length < 35) {
   }
 }
 
-console.log(COLORS);
+console.log("COLORS",COLORS);
 const CumulativeStackedBarChart = forwardRef<ChartJS<"bar"> | null>((_, ref) => {
 
   const chartInstanceRef = useRef<ChartJS<"bar"> | null>(null);
@@ -322,22 +322,9 @@ const CumulativeStackedBarChart = forwardRef<ChartJS<"bar"> | null>((_, ref) => 
       },
     },
   };
-  
-  // const ref = useRef<ChartJS<"bar"> | null>(null);
-
-  // const downloadImage = useCallback(() =>{
-
-  //   if (ref.current) {
-  //     const link = document.createElement("a");
-  //     link.download = "chart.png";
-  //     link.href = ref.current.toBase64Image();
-  //     link.click();
-  //   }
-  // }, []);
 
   return (
     <div style={{ width: "100%", height: "500px", display: "flex" }}>
-      {/* <button onClick={downloadImage}><strong>Download</strong></button> */}
       <Bar 
         // ref={ref} 
         ref={(instance) => {
