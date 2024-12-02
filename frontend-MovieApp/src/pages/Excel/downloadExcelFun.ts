@@ -1,5 +1,14 @@
 import ExcelJS from "exceljs";
 
+function convertHexColor(hexCode: string): string {
+    // Check if the color code starts with '#' and remove it
+    if (hexCode.startsWith('#')) {
+      return hexCode.slice(1);
+    }
+    // Return the code as-is if it doesn't start with '#'
+    return hexCode;
+  }
+
 export async function downloadAPIDataInExcelWithCustomHeaders(
     firstTableData: any[],
     secondTableData: any[]
@@ -23,15 +32,26 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
         "P100 Date",
         "FSA Date",
     ];
-    const firstTableRows = [firstTableHeader, ...firstTableData.map(Object.values)];
-
-    const firstTableStartRow = 1;
-    firstTableRows.forEach((row) => worksheet.addRow(row));
+    worksheet.addRow(firstTableHeader);
+    firstTableData.forEach((row) => {
+        worksheet.addRow([
+            row.study_id,
+            row.Total_Sites,
+            row.p25,
+            row.p25_date,
+            row.p50,
+            row.p50_date,
+            row.p90,
+            row.p90_date,
+            row.p100,
+            row.p100_date,
+            row.FSA_Date,
+        ]);
+    });
 
     // ------------------------
     // Add Blank Row
     // ------------------------
-    const blankRowIndex = firstTableRows.length + 1;
     worksheet.addRow([]);
 
     // ------------------------
@@ -51,15 +71,55 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
         "P100",
         "P100 Date",
     ];
-    const secondTableRows = [secondTableHeader, ...secondTableData.map(Object.values)];
+    worksheet.addRow(secondTableHeader);
 
-    const secondTableStartRow = blankRowIndex + 1;
-    secondTableRows.forEach((row) => worksheet.addRow(row));
+    secondTableData.forEach((row) => {
+        // Add data row
+        const newRow = worksheet.addRow([
+            row.country,
+            row.total_sites,
+            row.median_first_site,
+            row.country_fsa,
+            row.p25,
+            row.country_p25_date,
+            row.p50,
+            row.country_p50_date,
+            row.p90,
+            row.country_p90_date,
+            row.p100,
+            row.country_p100_date,
+        ]);
+
+        // Apply color to specific cells in the row
+        const colorColumns = {
+            "FSA Date": row.fsa_date_color,
+            "P25 Date": row.p25_date_color,
+            "P50 Date": row.p50_date_color,
+            "P90 Date": row.p90_date_color,
+            "P100 Date": row.p100_date_color,
+        };
+
+        const convertedColors = Object.fromEntries(
+            Object.entries(colorColumns).map(([key, value]) => [key, convertHexColor(value)])
+          );
+
+        Object.entries(convertedColors).forEach(([columnName, color]) => {
+            if (color) {
+                const columnIndex = secondTableHeader.indexOf(columnName) + 1; // ExcelJS columns are 1-based
+                const cell = newRow.getCell(columnIndex);
+                cell.fill = {
+                    type: "pattern",
+                    pattern: "solid",
+                    fgColor: { argb: color },
+                };
+            }
+        });
+    });
 
     // ------------------------
-    // Column Width Adjustment
+    // Adjust Column Widths
     // ------------------------
-    const adjustColumnWidths = (data: any[][], startIndex: number) => {
+    const adjustColumnWidths = (data: any[][]) => {
         const columns = data[0].map((_, colIndex) => {
             const maxLength = data.reduce((max, row) => {
                 const cellValue = row[colIndex] !== undefined ? row[colIndex].toString() : "";
@@ -69,15 +129,27 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
         });
 
         columns.forEach((width, colIndex) => {
-            worksheet.getColumn(startIndex + colIndex).width = Math.max(
-                worksheet.getColumn(startIndex + colIndex).width || 0,
-                width
-            );
+            worksheet.getColumn(colIndex + 1).width = width;
         });
     };
 
-    adjustColumnWidths(firstTableRows, 1);
-    adjustColumnWidths(secondTableRows, 1);
+    adjustColumnWidths([
+        secondTableHeader,
+        ...secondTableData.map((row) => [
+            row.country,
+            row.total_sites,
+            row.median_first_site,
+            row.country_fsa,
+            row.p25,
+            row.country_p25_date,
+            row.p50,
+            row.country_p50_date,
+            row.p90,
+            row.country_p90_date,
+            row.p100,
+            row.country_p100_date,
+        ]),
+    ]);
 
     // ------------------------
     // Styling for Headers
@@ -85,7 +157,7 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
     const styleHeader = (rowIndex: number, fillColor: string) => {
         const headerRow = worksheet.getRow(rowIndex);
         headerRow.eachCell((cell) => {
-            cell.font = { bold: true, color: { argb: "FFFFFFFF" } }; // White text
+            cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
             cell.fill = {
                 type: "pattern",
                 pattern: "solid",
@@ -101,29 +173,8 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
         });
     };
 
-    styleHeader(firstTableStartRow, "FF4CAF50"); // Green for the first table
-    styleHeader(secondTableStartRow, "FFFFA726"); // Orange for the second table
-
-    // ------------------------
-    // Styling for Data Rows
-    // ------------------------
-    const styleDataRows = (startRow: number, endRow: number) => {
-        for (let i = startRow; i <= endRow; i++) {
-            const row = worksheet.getRow(i);
-            row.eachCell((cell) => {
-                cell.border = {
-                    top: { style: "thin" },
-                    left: { style: "thin" },
-                    bottom: { style: "thin" },
-                    right: { style: "thin" },
-                };
-                cell.alignment = { vertical: "middle", horizontal: "center" };
-            });
-        }
-    };
-
-    styleDataRows(firstTableStartRow + 1, blankRowIndex - 1);
-    styleDataRows(secondTableStartRow + 1, worksheet.lastRow?.number || 0);
+    styleHeader(1, "FF4CAF50"); // Green for the first table
+    styleHeader(firstTableData.length + 3, "FFFFA726"); // Orange for the second table
 
     // ------------------------
     // Save and Download

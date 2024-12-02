@@ -61,16 +61,16 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
   const [yRange, setYRange] = useState<number[]>([0, 1000]);
 
   const data = {
-    labels: displayLabels.slice(xRange[0], xRange[1] + 1),
+    labels: labels.slice(xRange[0], xRange[1] + 1), // Use full `labels` for accurate tooltips
     datasets: [
       {
         label: "Activations",
         data: activations.slice(xRange[0], xRange[1] + 1),
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderWidth: 3, // Increase line width
-        pointRadius: 1, // No points initially
-        pointHoverRadius: 6, // Points appear on hover
+        borderWidth: 3, // Thick line
+        pointRadius: 2, // Points always visible
+        pointHoverRadius: 6, // Larger points on hover
         fill: true,
       },
       {
@@ -78,88 +78,34 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
         data: solver.slice(xRange[0], xRange[1] + 1),
         borderColor: "rgba(54, 162, 235, 1)",
         backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderWidth: 3, // Increase line width
-        pointRadius: 1, // No points initially
-        pointHoverRadius: 6, // Points appear on hover
+        borderWidth: 3, // Thick line
+        pointRadius: 2, // Points always visible
+        pointHoverRadius: 6, // Larger points on hover
         fill: true,
       },
     ],
   };
-
-  // const options: ChartOptions<"line"> = {
-  //   responsive: true,
-  //   maintainAspectRatio: false,
-  //   plugins: {
-  //     tooltip: {
-  //       enabled: true, // Ensure tooltips are enabled
-  //       mode: "nearest",
-  //       intersect: false,
-  //     },
-  //   },
-  //   scales: {
-  //     x: {
-  //       beginAtZero: true,
-  //       title: {
-  //         display: true,
-  //         text: "Date",
-  //       },
-  //       grid: {
-  //         display: false,
-  //       },
-  //       ticks: {
-  //         maxRotation: 0,
-  //         minRotation: 45,
-  //         font: {
-  //           size: 8,
-  //           family: "Arial",
-  //           style: "normal",
-  //           weight: "bold",
-  //         },
-  //         autoSkip: false,
-  //         callback: function (value: string | number, index: number) {
-  //           const dateLabel = displayLabels[Number(value)];
-  //           return index % 6 === 0 ? dateLabel : "";
-  //         },
-  //       },
-  //     },
-  //     y: {
-  //       min: yRange[0],
-  //       max: yRange[1],
-  //       title: {
-  //         display: true,
-  //         text: "Count",
-  //       },
-  //       grid: {
-  //         display: true,
-  //       },
-  //     },
-  //   },
-  // };
-
+  
   const options: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       tooltip: {
-        enabled: true, // Ensure tooltips are enabled
+        enabled: true,
         mode: "nearest",
         intersect: false,
         callbacks: {
-          // Customizes tooltip label
           title: function (tooltipItems) {
-            // Extract the corresponding label for the hovered data point
             const index = tooltipItems[0].dataIndex;
-            const rawLabel = labels[index]; // Use the original `labels` array
-            
+            const rawLabel = labels[index];
             const [year, month, day] = rawLabel.split("-").map(Number);
             const monthNames = [
               "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
             ];
             return `${day}-${monthNames[month - 1]}-${year}`;
           },
           label: function (tooltipItem) {
-            // Show dataset label with value
             return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
           },
         },
@@ -176,7 +122,8 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
           display: false,
         },
         ticks: {
-          maxRotation: 0,
+          autoSkip: false, // Ensure all points are shown
+          maxRotation: 45,
           minRotation: 45,
           font: {
             size: 8,
@@ -184,10 +131,14 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
             style: "normal",
             weight: "bold",
           },
-          autoSkip: false,
           callback: function (value: string | number, index: number) {
-            const dateLabel = displayLabels[Number(value)];
-            return index % 6 === 0 ? dateLabel : "";
+            const rawLabel = labels[Number(value)];
+            const [year, month, day] = rawLabel.split("-").map(Number);
+            const monthNames = [
+              "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+            ];
+            return `${day}-${monthNames[month - 1]}`;
           },
         },
       },

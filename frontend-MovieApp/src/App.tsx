@@ -62,19 +62,7 @@ function App() {
         p100_date: "2024-11-30",
         FSA_Date: "2024-11-15",
     },
-    {
-        study_id: "Study002",
-        Total_Sites: 15,
-        p25: 3,
-        p25_date: "2024-11-05",
-        p50: 8,
-        p50_date: "2024-11-12",
-        p90: 13,
-        p90_date: "2024-11-25",
-        p100: 15,
-        p100_date: "2024-11-30",
-        FSA_Date: "2024-11-18",
-    },
+    
 ];
 
 // Sample data for the second table
@@ -92,6 +80,11 @@ const secondTableData = [
         country_p90_date: "2024-11-18",
         p100: 50,
         country_p100_date: "2024-11-25",
+        fsa_date_color: 'f72f04',
+        p25_date_color: '76f704',
+        p50_date_color: '04f0f7',
+        p90_date_color: 'e804f7',
+        p100_date_color: 'e804f7'
     },
     {
         country: "India",
@@ -106,6 +99,12 @@ const secondTableData = [
         country_p90_date: "2024-11-22",
         p100: 30,
         country_p100_date: "2024-11-30",
+        fsa_date_color: '#f72f04',
+        p25_date_color: '#76f704',
+        p50_date_color: '#04f0f7',
+        p90_date_color: '#e804f7',
+        p100_date_color: '#e804f7',
+
     },
 ];
   // generateExcelFile();
@@ -167,22 +166,24 @@ const secondTableData = [
       <div className="dark:bg-red-900 dark:text-white min-h-screen px-4 lg:px-12 pb-20">
         {" "}
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
+        
+
         <div className="flex-1 ml-64 p-6">
-          <Header />
-      <button onClick={handleDownload}><strong>Download</strong></button>
+          {/* <Header />
+      <button onClick={handleDownload}><strong>Download</strong></button> */}
 
 
           {/* <StackedBarChartJSIMP/>
           <StackedBarChart2 /> */}
-          <StackedBarChartJS ref={chartRef}/>
+          {/* <StackedBarChartJS ref={chartRef}/> */}
           {/* <StackedBarPlotly />
           <StackedBarChartD3 /> */}
 
           {/* <LineChartRe /> */}
           
-          <div className="plotly">
+          {/* <div className="plotly">
             <LineChartPlotly />
-          </div>
+          </div> */}
 
           {/* <LineChartJS /> */}
 
