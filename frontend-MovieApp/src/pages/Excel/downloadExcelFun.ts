@@ -22,6 +22,7 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
     const firstTableHeader = [
         "Study ID",
         "Total Sites",
+        "FSA Date",
         "P25",
         "P25 Date",
         "P50",
@@ -30,13 +31,13 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
         "P90 Date",
         "P100",
         "P100 Date",
-        "FSA Date",
     ];
     worksheet.addRow(firstTableHeader);
     firstTableData.forEach((row) => {
         worksheet.addRow([
             row.study_id,
             row.Total_Sites,
+            row.FSA_Date,
             row.p25,
             row.p25_date,
             row.p50,
@@ -45,7 +46,6 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
             row.p90_date,
             row.p100,
             row.p100_date,
-            row.FSA_Date,
         ]);
     });
 
@@ -119,21 +119,41 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
     // ------------------------
     // Adjust Column Widths
     // ------------------------
-    const adjustColumnWidths = (data: any[][]) => {
-        const columns = data[0].map((_, colIndex) => {
-            const maxLength = data.reduce((max, row) => {
-                const cellValue = row[colIndex] !== undefined ? row[colIndex].toString() : "";
-                return Math.max(max, cellValue.length);
-            }, 0);
-            return maxLength + 2; // Add padding
-        });
+    // Adjust column widths for the first table only
+const adjustFirstTableColumnWidths = () => {
+    const firstTableDataArray = [
+        firstTableHeader,
+        ...firstTableData.map((row) => [
+            row.study_id,
+            row.Total_Sites,
+            row.p25,
+            row.p25_date,
+            row.p50,
+            row.p50_date,
+            row.p90,
+            row.p90_date,
+            row.p100,
+            row.p100_date,
+            row.FSA_Date,
+        ]),
+    ];
 
-        columns.forEach((width, colIndex) => {
-            worksheet.getColumn(colIndex + 1).width = width;
-        });
-    };
+    const firstTableColumns = firstTableDataArray[0].map((_, colIndex) => {
+        const maxLength = firstTableDataArray.reduce((max, row) => {
+            const cellValue = row[colIndex] !== undefined ? row[colIndex].toString() : "";
+            return Math.max(max, cellValue.length);
+        }, 0);
+        return maxLength + 2; // Add padding
+    });
 
-    adjustColumnWidths([
+    firstTableColumns.forEach((width, colIndex) => {
+        worksheet.getColumn(colIndex + 1).width = width;
+    });
+};
+
+// Adjust column widths for the second table only
+const adjustSecondTableColumnWidths = () => {
+    const secondTableDataArray = [
         secondTableHeader,
         ...secondTableData.map((row) => [
             row.country,
@@ -149,7 +169,24 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
             row.p100,
             row.country_p100_date,
         ]),
-    ]);
+    ];
+
+    const secondTableColumns = secondTableDataArray[0].map((_, colIndex) => {
+        const maxLength = secondTableDataArray.reduce((max, row) => {
+            const cellValue = row[colIndex] !== undefined ? row[colIndex].toString() : "";
+            return Math.max(max, cellValue.length);
+        }, 0);
+        return maxLength + 2; // Add padding
+    });
+
+    secondTableColumns.forEach((width, colIndex) => {
+        worksheet.getColumn(colIndex + 1).width = width;
+    });
+};
+
+// Apply adjustments
+adjustSecondTableColumnWidths();
+adjustFirstTableColumnWidths();
 
     // ------------------------
     // Styling for Headers

@@ -52,6 +52,7 @@ function App() {
     {
         study_id: "Study001",
         Total_Sites: 25,
+        FSA_Date: "2024-11-15",
         p25: 5,
         p25_date: "2024-11-01",
         p50: 12,
@@ -60,7 +61,6 @@ function App() {
         p90_date: "2024-11-20",
         p100: 25,
         p100_date: "2024-11-30",
-        FSA_Date: "2024-11-15",
     },
     
 ];
@@ -108,7 +108,7 @@ const secondTableData = [
     },
 ];
   // generateExcelFile();
-  // downloadAPIDataInExcelWithCustomHeaders(firstTableData, secondTableData);
+  downloadAPIDataInExcelWithCustomHeaders(firstTableData, secondTableData);
 
   useEffect(() => {
     dispatch(getMovies());
