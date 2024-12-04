@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Header from "./components/Header/Header";
 import { useAppDispatch, useAppSelector } from "./hooks/storeHook";
@@ -51,63 +51,61 @@ function App() {
   const searchRef = useRef<HTMLInputElement>(null);
   const firstTableData = [
     {
-        study_id: "Study001",
-        Total_Sites: 25,
-        FSA_Date: "2024-11-15",
-        p25: 5,
-        p25_date: "2024-11-01",
-        p50: 12,
-        p50_date: "2024-11-10",
-        p90: 20,
-        p90_date: "2024-11-20",
-        p100: 25,
-        p100_date: "2024-11-30",
+      study_id: "Study001",
+      Total_Sites: 25,
+      FSA_Date: "2024-11-15",
+      p25: 5,
+      p25_date: "2024-11-01",
+      p50: 12,
+      p50_date: "2024-11-10",
+      p90: 20,
+      p90_date: "2024-11-20",
+      p100: 25,
+      p100_date: "2024-11-30",
     },
-    
-];
+  ];
 
-// Sample data for the second table
-const secondTableData = [
+  // Sample data for the second table
+  const secondTableData = [
     {
-        country: "USA",
-        total_sites: 50,
-        median_first_site: 8,
-        country_fsa: "2024-11-02",
-        p25: 10,
-        country_p25_date: "2024-11-04",
-        p50: 20,
-        country_p50_date: "2024-11-10",
-        p90: 40,
-        country_p90_date: "2024-11-18",
-        p100: 50,
-        country_p100_date: "2024-11-25",
-        fsa_date_color: 'f72f04',
-        p25_date_color: '76f704',
-        p50_date_color: '04f0f7',
-        p90_date_color: 'e804f7',
-        p100_date_color: 'e804f7'
+      country: "USA",
+      total_sites: 50,
+      median_first_site: 8,
+      country_fsa: "2024-11-02",
+      p25: 10,
+      country_p25_date: "2024-11-04",
+      p50: 20,
+      country_p50_date: "2024-11-10",
+      p90: 40,
+      country_p90_date: "2024-11-18",
+      p100: 50,
+      country_p100_date: "2024-11-25",
+      fsa_date_color: "f72f04",
+      p25_date_color: "76f704",
+      p50_date_color: "04f0f7",
+      p90_date_color: "e804f7",
+      p100_date_color: "e804f7",
     },
     {
-        country: "India",
-        total_sites: 30,
-        median_first_site: 6,
-        country_fsa: "2024-11-05",
-        p25: 7,
-        country_p25_date: "2024-11-07",
-        p50: 15,
-        country_p50_date: "2024-11-12",
-        p90: 25,
-        country_p90_date: "2024-11-22",
-        p100: 30,
-        country_p100_date: "2024-11-30",
-        fsa_date_color: '#f72f04',
-        p25_date_color: '#76f704',
-        p50_date_color: '#04f0f7',
-        p90_date_color: '#e804f7',
-        p100_date_color: '#e804f7',
-
+      country: "India",
+      total_sites: 30,
+      median_first_site: 6,
+      country_fsa: "2024-11-05",
+      p25: 7,
+      country_p25_date: "2024-11-07",
+      p50: 15,
+      country_p50_date: "2024-11-12",
+      p90: 25,
+      country_p90_date: "2024-11-22",
+      p100: 30,
+      country_p100_date: "2024-11-30",
+      fsa_date_color: "#f72f04",
+      p25_date_color: "#76f704",
+      p50_date_color: "#04f0f7",
+      p90_date_color: "#e804f7",
+      p100_date_color: "#e804f7",
     },
-];
+  ];
   // generateExcelFile();
   // downloadAPIDataInExcelWithCustomHeaders(firstTableData, secondTableData);
 
@@ -132,7 +130,6 @@ const secondTableData = [
     }
   };
 
-  
   // ---------------------------------------START-----------------------------------------
   // Better to use Memoized Selectors
   // const searchedMovies = Array.isArray(movies.data) && movies.data.filter((movie) => {
@@ -160,20 +157,65 @@ const secondTableData = [
       console.error("Chart reference is null. Cannot download image.");
     }
   };
-
+  type DropdownOption = { label: string; value: string | number };
+  type DropdownRef = { hide: () => void; container: HTMLElement };
   // ---------------------------------------END-----------------------------------------
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null); // Track the open dropdown
+  const dropdownRefs = useRef<Map<string, any>>(new Map()); // Store dropdown references
+
+    const options: string[] = ["Pramod", "Prajwal", "Adhi", "Varsha"];
+
+    const handleDropdownClick = (id: string) => {
+        // Close the previously open dropdown, if any
+        if (openDropdownId && openDropdownId !== id) {
+            dropdownRefs.current.get(openDropdownId)?.hide();
+        }
+        // Open the clicked dropdown
+        setOpenDropdownId(id);
+    };
+
+    const handleChange = (value: string | number, id: string) => {
+        console.log(`Selected ${value} for ${id}`);
+    };
+
   return (
     <div className={darkTheme ? "dark" : ""}>
       <div className="dark:bg-red-900 dark:text-white min-h-screen px-4 lg:px-12 pb-20">
-      
-
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
-        
 
+        <div>
+          <Dropdown
+            options={options}
+            onChange={(e) => handleChange(e.value, "dropdown1")}
+            placeholder="Select Option for Dropdown 1"
+            ref={(el) => el && dropdownRefs.current.set("dropdown1", el)}
+            onClick={() => handleDropdownClick("dropdown1")}
+          />
+          <Dropdown
+            options={options}
+            onChange={(e) => handleChange(e.value, "dropdown2")}
+            placeholder="Select Option for Dropdown 2"
+            ref={(el) => el && dropdownRefs.current.set("dropdown2", el)}   // el is the DOM or Dropdown component reference or component instance. If el is truthy (i.e., not null), the Dropdown component reference is stored in the dropdownRefs Map with the key "dropdown4".
+            onClick={() => handleDropdownClick("dropdown2")}
+          />
+          <Dropdown
+            options={options}
+            onChange={(e) => handleChange(e.value, "dropdown3")}
+            placeholder="Select Option for Dropdown 3"
+            ref={(el) => el && dropdownRefs.current.set("dropdown3", el)}
+            onClick={() => handleDropdownClick("dropdown3")}
+          />
+          <Dropdown
+            options={options}
+            onChange={(e) => handleChange(e.value, "dropdown4")}
+            placeholder="Select Option for Dropdown 4"
+            ref={(el) => el && dropdownRefs.current.set("dropdown4", el)}
+            onClick={() => handleDropdownClick("dropdown4")}
+          />
+        </div>
         <div className="flex-1 ml-64 p-6">
           {/* <Header />
       <button onClick={handleDownload}><strong>Download</strong></button> */}
-
 
           {/* <StackedBarChartJSIMP/>
           <StackedBarChart2 /> */}
@@ -182,7 +224,7 @@ const secondTableData = [
           <StackedBarChartD3 /> */}
 
           {/* <LineChartRe /> */}
-          
+
           {/* <div className="plotly">
             <LineChartPlotly />
           </div> */}
