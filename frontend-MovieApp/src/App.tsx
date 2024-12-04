@@ -27,6 +27,7 @@ import { generateExcelFile } from "./pages/Excel/downloadExcel";
 import { downloadAPIDataInExcelWithCustomHeaders } from "./pages/Excel/downloadExcelFun";
 // import StackedBarChartD3 from "./pages/D3.js/StackedBarChartD3";
 import { Chart as ChartJS } from "chart.js";
+import { Dropdown } from "primereact/dropdown";
 function App() {
   // -----------------------------1----------------------------------------------------
   // const wholeAppState = useAppSelector((state) => state); // Object destructuring --By doing this will get the complete store data with it's current state.
@@ -108,7 +109,7 @@ const secondTableData = [
     },
 ];
   // generateExcelFile();
-  downloadAPIDataInExcelWithCustomHeaders(firstTableData, secondTableData);
+  // downloadAPIDataInExcelWithCustomHeaders(firstTableData, secondTableData);
 
   useEffect(() => {
     dispatch(getMovies());
@@ -164,7 +165,8 @@ const secondTableData = [
   return (
     <div className={darkTheme ? "dark" : ""}>
       <div className="dark:bg-red-900 dark:text-white min-h-screen px-4 lg:px-12 pb-20">
-        {" "}
+      
+
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
         
 
