@@ -225,9 +225,9 @@ function App() {
 
           {/* <LineChartRe /> */}
 
-          {/* <div className="plotly">
+          <div className="plotly">
             <LineChartPlotly />
-          </div> */}
+          </div>
 
           {/* <LineChartJS /> */}
 
