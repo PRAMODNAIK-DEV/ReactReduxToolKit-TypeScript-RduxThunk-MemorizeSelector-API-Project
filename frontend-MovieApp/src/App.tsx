@@ -51,17 +51,20 @@ function App() {
   const searchRef = useRef<HTMLInputElement>(null);
   const firstTableData = [
     {
-      study_id: "Study001",
-      Total_Sites: 25,
-      FSA_Date: "2024-11-15",
-      p25: 5,
-      p25_date: "2024-11-01",
-      p50: 12,
-      p50_date: "2024-11-10",
-      p90: 20,
-      p90_date: "2024-11-20",
-      p100: 25,
-      p100_date: "2024-11-30",
+      study_id: "*PLACEHOLDER*",
+      p25: 37,
+      p25_date: "2025-01-16",
+      p50: 74,
+      p50_date: "2025-02-22",
+      p90: 147,
+      p90_date: "2025-05-06",
+      p100: 198,
+      p100_date: "2025-06-26",
+      Total_Sites: 30,
+      FSA_Date: "2024-12-10",
+      FAP_Date: "2025-03-10",
+      CTA_Date: "2025-04-07",
+      anchor: "",
     },
   ];
 
@@ -163,27 +166,61 @@ function App() {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null); // Track the open dropdown
   const dropdownRefs = useRef<Map<string, any>>(new Map()); // Store dropdown references
 
-    const options: string[] = ["Pramod", "Prajwal", "Adhi", "Varsha"];
+  const options: string[] = ["Pramod", "Prajwal", "Adhi", "Varsha"];
 
-    const handleDropdownClick = (id: string) => {
-        // Close the previously open dropdown, if any
-        if (openDropdownId && openDropdownId !== id) {
-            dropdownRefs.current.get(openDropdownId)?.hide();
-        }
-        // Open the clicked dropdown
-        setOpenDropdownId(id);
-    };
+  const handleDropdownClick = (id: string) => {
+    // Close the previously open dropdown, if any
+    if (openDropdownId && openDropdownId !== id) {
+      dropdownRefs.current.get(openDropdownId)?.hide();
+    }
+    // Open the clicked dropdown
+    setOpenDropdownId(id);
+  };
 
-    const handleChange = (value: string | number, id: string) => {
-        console.log(`Selected ${value} for ${id}`);
-    };
+  const handleChange = (value: string | number, id: string) => {
+    console.log(`Selected ${value} for ${id}`);
+  };
+  const [value, setValue] = useState('');
+
+  const [rawValue, setRawValue] = useState<string>('0.000'); // Holds the actual numeric value
+  const [displayValue, setDisplayValue] = useState<string>('0.000'); // Holds the formatted display value
+
+  console.log("rawValue", rawValue.replace(/,/g, ''));
+  console.log("displayValue", displayValue);
+  
+  
+  const formatNumber = (value: string): string => {
+    if (!value) return '';
+    // Separate integer and decimal parts
+    const [integerPart, decimalPart] = value.split('.');
+    const formattedInteger = parseInt(integerPart || '0', 10).toLocaleString('en-US'); // Format integer part with commas
+    return decimalPart !== undefined ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+  };
+
+  const handleChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value.replace(/,/g, ''); // Remove commas for processing
+
+    // Allow only valid numbers (integers or floats)
+    if (/^\d*\.?\d*$/.test(inputValue)) {
+      // setRawValue(inputValue); // Update the raw numeric value
+      setDisplayValue(formatNumber(inputValue)); // Update the formatted display value
+    }
+  };
 
   return (
     <div className={darkTheme ? "dark" : ""}>
       <div className="dark:bg-red-900 dark:text-white min-h-screen px-4 lg:px-12 pb-20">
         {/* These are special utility classes that Tailwind applies when the parent element has the dark class */}
 
-        <div>
+        <input
+        type="text"
+        value={displayValue}
+        onChange={handleChange2}
+        // placeholder="Enter a number"
+        className="input-class"
+      />
+
+        {/* <div>
           <Dropdown
             options={options}
             onChange={(e) => handleChange(e.value, "dropdown1")}
@@ -212,7 +249,8 @@ function App() {
             ref={(el) => el && dropdownRefs.current.set("dropdown4", el)}
             onClick={() => handleDropdownClick("dropdown4")}
           />
-        </div>
+        </div> */}
+
         <div className="flex-1 ml-64 p-6">
           {/* <Header />
       <button onClick={handleDownload}><strong>Download</strong></button> */}

@@ -22,56 +22,29 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
     .map(() => ({ width: 15 }));
 
   // ------------------------
-  // First Table Data
+  // First Table: Activation Category and Activation Date
   // ------------------------
-  const firstTableHeader = [
-    "Study ID",
-    "Total Sites",
-    "FSA Date",
-    "P25",
-    "P25 Date",
-    "P50",
-    "P50 Date",
-    "P90",
-    "P90 Date",
-    "P100",
-    "P100 Date",
-  ];
+  const firstTableHeader = ["Activation Category", "Activation Date"];
 
   worksheet.addRow(firstTableHeader);
 
-  firstTableData.forEach((row) => {
-    const newRow = worksheet.addRow([
-      row.study_id,
-      row.Total_Sites,
-      formatDate(row.FSA_Date),
-      row.p25,
-      row.p25_date,
-      row.p50,
-      row.p50_date,
-      row.p90,
-      row.p90_date,
-      row.p100,
-      row.p100_date,
-    ]);
+  const activationData = [
+    ["FSA_Date", firstTableData[0]?.FSA_Date],
+    ["p25_date", firstTableData[0]?.p25_date],
+    ["p50_date", firstTableData[0]?.p50_date],
+    ["p90_date", firstTableData[0]?.p90_date],
+    ["p100_date", firstTableData[0]?.p100_date],
+  ];
+
+  activationData.forEach(([key, value]) => {
+    const newRow = worksheet.addRow([key, value]);
 
     newRow.eachCell((cell) => {
       cell.alignment = { horizontal: "center", vertical: "middle" };
     });
   });
 
-  // Adjust column widths for the first table
-  firstTableHeader.forEach((_, colIndex) => {
-    const maxLength = Math.max(
-      ...firstTableData.map(
-        (row) => row[firstTableHeader[colIndex]]?.toString().length || 0
-      ),
-      firstTableHeader[colIndex].length
-    );
-    worksheet.getColumn(colIndex + 1).width = maxLength + 2;
-  });
-
-  // Style the header row for the first table
+  // Style First Table Header
   const firstHeaderRow = worksheet.getRow(1);
   firstHeaderRow.eachCell((cell) => {
     cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
@@ -88,6 +61,15 @@ export async function downloadAPIDataInExcelWithCustomHeaders(
       right: { style: "thin" },
     };
   });
+
+  // Adjust column widths for the first table
+  worksheet.getColumn(1).width = 20; // Activation Category
+  worksheet.getColumn(2).width = 15; // Activation Date
+
+  // ------------------------
+  // Add Blank Row
+  // ------------------------
+  worksheet.addRow([]);
 
   // ------------------------
   // Add Blank Row
