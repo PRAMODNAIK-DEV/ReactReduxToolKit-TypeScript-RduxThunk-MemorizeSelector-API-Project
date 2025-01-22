@@ -1,6 +1,7 @@
-# Getting Started with Create React App
+This Codebase includes the React Logic for implementing the Graphs especially StackedBar Graph and Line Gaph with custom scrollers.
+Also has Redux Toolkit setup
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Getting Started with Create React App
 
 
 Install:
