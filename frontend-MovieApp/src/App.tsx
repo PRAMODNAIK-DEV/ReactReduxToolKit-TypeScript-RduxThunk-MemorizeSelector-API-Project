@@ -255,9 +255,9 @@ function App() {
           {/* <Header />
       <button onClick={handleDownload}><strong>Download</strong></button> */}
 
-          {/* <StackedBarChartJSIMP/>
-          <StackedBarChart2 /> */}
-          {/* <StackedBarChartJS ref={chartRef}/> */}
+          {/* <StackedBarChartJSIMP/> */}
+          {/* <StackedBarChart2 />  */}
+          <StackedBarChartJS ref={chartRef}/>       
           {/* <StackedBarPlotly />
           <StackedBarChartD3 /> */}
 

@@ -15,6 +15,7 @@ import Slider from "@mui/material/Slider";
 import Box from "@mui/material/Box";
 import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { daily_activation_cumulativeDummy, dateLabelsDummy, LSR_Daily_Rand_CumulativeDummy } from "../../DummyGraphData";
+import dayjs from "dayjs";
 
 ChartJS.register(
   CategoryScale,
@@ -42,7 +43,7 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
   // );
   // const solver = Array.from({ length: 300 }, (_, i) => i * 2);
 
-  const labels = dateLabelsDummy;
+  const labels = dateLabelsDummy.map((date) => dayjs(date).format("DD-MMM-YYYY"));
   const activations = daily_activation_cumulativeDummy;
   const solver = LSR_Daily_Rand_CumulativeDummy;
 
@@ -139,7 +140,8 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
         type: "linear",
         position: "left",
         min: yLeftRange[0],
-        max: yLeftRange[1],
+        // max: yLeftRange[1],
+        max: Math.ceil(yLeftRange[1] / 5) * 5,
         title: {
           display: true,
           text: "Activations",
@@ -152,7 +154,8 @@ const LineGraphWithMaterialUISliders: React.FC = () => {
         type: "linear",
         position: "right",
         min: yRightRange[0],
-        max: yRightRange[1],
+        // max: yRightRange[1],
+        max: Math.ceil(yRightRange[1] / 5) * 5,
         title: {
           display: true,
           text: "LSR Solver",

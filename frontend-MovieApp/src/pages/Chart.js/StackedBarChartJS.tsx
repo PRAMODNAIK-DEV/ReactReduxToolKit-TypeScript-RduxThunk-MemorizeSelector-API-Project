@@ -13,6 +13,7 @@ import {
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { log } from "console";
 import { reforwardRef } from "react-chartjs-2/dist/utils";
+import { SMArT } from "../../SMArTData";
 
 // This is mandatory after Chart.js 3
 ChartJS.register(
@@ -82,7 +83,8 @@ const generateCumulativeData = () => {
   return cumulativeData;
 };
 
-const data = generateCumulativeData();
+// const data = generateCumulativeData();
+const data = SMArT;
 console.log("data", data);
 
 
@@ -127,7 +129,7 @@ const CumulativeStackedBarChart = forwardRef<ChartJS<"bar"> | null>((_, ref) => 
     
     // This will loop upto 80 times and check the value of it and repeats the same for each country in alphabetical order.
     // So data will return array integers and the size is equal to number of day's from start to end date.
-    data: data.map((item) =>    
+    data: data.map((item: any) =>    
       (item[key] as number) > 0 ? (item[key] as number) : null
     ), // Show only non-zero values
     backgroundColor: COLORS[index % COLORS.length],
@@ -295,25 +297,8 @@ const CumulativeStackedBarChart = forwardRef<ChartJS<"bar"> | null>((_, ref) => 
         stacked: true,
         ticks: {
           callback: (value: any, index: number) => {
-            const date = dayjs(labels[index]);
-            const day = date.date();
-            const month = date.format("MMM");
-      
-            // Initial label for the day
-            let label = `${day}`;
-      
-            // Check if this is the first label of the month or it's the 15th
-            if (index === 0 || day === 15 || dayjs(labels[index - 1]).format("MMM") !== month) {
-              label += `\n${month}`;
-            }
-      
-            // Handle skipping of the 15th by checking if 16 or 17 is available
-            if (day !== 15 && (day === 16 || day === 17) && !labels.some((label: string, idx: number) => dayjs(label).date() === 15)) {
-              // If 15th is skipped, add a label for 16th or 17th
-              label = `${day}\n${month}`;
-            }
-      
-            return label;
+            const date = dayjs(labels[index]).format("DD-MMM-YYYY"); // Full date format
+            return date; // Return the full formatted date
           },
         },
       },
